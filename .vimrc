@@ -3,6 +3,7 @@ highlight Normal ctermfg=grey ctermbg=Black
 set t_Co=256
 set t_ut=
 set background=dark
+
 syntax on
 set nu
 set cursorcolumn
@@ -39,7 +40,12 @@ nnoremap <S-b> $dl
 
 " Executing over ranges made easy
 vmap <Leader>n :normal
-nnoremap <Leader>i :tabe /usr/include
+
+" Open system headers more easily..
+nnoremap <Leader>i q:itabe /usr/include
+
+" man page prefix
+nnoremap man q:i! man 
 
 nnoremap cd :lcd %:p:h<CR>
 
@@ -59,6 +65,9 @@ inoremap <Leader>w <Esc>:w<CR>a
 " Search for selection
 vnoremap // y/<C-R>"<CR>
 
+" Copy whole file to clipboard on machines with xclip
+nmap cp :! cat % \| xclip -selection c<CR>
+
 " Filetype specifics
 filetype on
 autocmd FileType python set tabstop=8 shiftwidth=8 sts=8
@@ -70,32 +79,32 @@ autocmd FileType make   setlocal noexpandtab
 autocmd BufRead,BufNewFile *.s       setfiletype gas
 autocmd BufNewFile,BufRead *.vs,*.fs set ft=glsl
 
-" Copy whole file to clipboard on machines with xclip
-nmap cp :! cat % \| xclip -selection c<CR>
-
-" Change directory to this files parent dir
-nmap cd :lcd %:p:h<CR>
 
 call plug#begin()
-
 Plug 'tikhomirov/vim-glsl'
 Plug 'dracula/vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-syntastic/syntastic'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+"Plug 'justinmk/vim-syntax-extra'
 Plug 'octol/vim-cpp-enhanced-highlight'
 "Plug 'lervag/vimtex'
-
+Plug 'neovimhaskell/haskell-vim'
 call plug#end()
 
-colorscheme dracula
+" Color ish
+colorscheme gruvbox
+
+highlight Normal     ctermfg=white
+highlight NonText    ctermfg=grey
+highlight SpecialKey ctermfg=grey
 
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled=1
 
 map <space> <Plug>(easymotion-bd-w)
 
-let g:cpp_class_scope_highlight = 1
-let g:cpp_member_variable_highlight = 1
+"let g:cpp_class_scope_highlight = 1
+"let g:cpp_member_variable_highlight = 1
 
