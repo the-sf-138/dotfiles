@@ -30,6 +30,7 @@
 (require 'ace-jump-mode)    ; better vesion of ez motion
 (require 'ansi-color)
 
+(setq ring-bell-function 'ignore)
 
 ; tmux-like functionality
 (use-package eyebrowse
@@ -40,8 +41,6 @@
   (evil-define-key 'motion 'global (kbd "SPC ec") 'eyebrowse-create-window-config)
   (evil-define-key 'motion 'global (kbd "SPC er") 'eyebrowse-rename-window-config)
   (evil-define-key 'motion 'global (kbd "SPC eo") 'eyebrowse-switch-to-window-config))
-
-(global-linum-mode t)
 
 ;; attempt to make shell mode less bad
 (use-package bash-completion
@@ -58,6 +57,11 @@
   (setq telephone-line-height 24
         telephone-line-evil-use-short-tag t)
   (telephone-line-mode 1))
+
+(use-package linum-relative
+  :ensure t
+  :config
+  (setq linum-relative-backend 'display-line-numbers-mode))
 
 (use-package disable-mouse
   :ensure t
@@ -185,7 +189,7 @@
 
 (defun reload-emacs ()
   (interactive)
-  (load-file "~/.emacs"))
+  (load-file "~/.emacs.d/init.el"))
 
 (defun clean-evil-escape()
   (interactive)
@@ -201,7 +205,7 @@
 (evil-define-key 'normal 'global "\M-r" 'undo-tree-visualize)
 
 ; jumping around
-(evil-define-key '(normal) 'global (kbd "SPC SPC") 'ace-jump-mode)
+(evil-define-key '(normal) 'global (kbd "SPC n") 'ace-jump-mode)
 
 (define-key evil-normal-state-map "\C-h" nil)
 (evil-define-key 'motion 'global "\C-b" 'helm-apropos)
@@ -217,7 +221,7 @@
 (setq-default tab-always-indent t)
 (setq-default tab-width 4)
 
-(defvar colemake-mode (load-file "/home/the_sf/.emacs.d/colemak-mode.el"))
+(defvar colemak-mode (load-file "~/.emacs.d/colemak-mode.el"))
 
 (load-theme 'gruvbox t)
 (menu-bar-mode 1)
@@ -230,11 +234,6 @@
 (setq indent-tabs-mode nil)
 (evil-define-key 'insert 'global (kbd "TAB") 'tab-to-tab-stop)
 
-; using the system clipboard
-(evil-define-key 'normal 'global "\C-c" 'clipboard-yank)
-(evil-define-key 'normal 'global "\C-v" nil)
-
-
 (use-package org-bullets
   :ensure t
   :init (add-hook 'org-mode-hook (lambda ()
@@ -244,11 +243,7 @@
   (interactive)
   (print major-mode))
 
-(evil-define-key '(normal insert) 'global (kbd "C-SPC") 'completion-help-at-)
-(evil-define-key '(normal insert) 'global "\C-p" nil)
-
-(evil-define-key '(normal motion) 'global "\M-x" 'helm-M-x)
-
+(evil-define-key 'motion 'global "\M-x" 'helm-M-x)
 
 ;; Get rid of the annoying compliation mode map
 (add-hook 'compilation-mode-hook (lambda() (setq compilation-mode-map evil-normal-state-map)))
@@ -261,32 +256,6 @@
 (defun cd-to-buffer-dir()
   (interactive)
   (cd default-directory))
-
-;; setting up stuff for working with delimiters
-(evil-define-key 'normal 'global "d" (general-key-dispatch 'evil-delete
-                                                                                "q" (general-simulate-key ('evil-delete "i\""))
-                                                                                "k" (general-simulate-key ('evil-delete "i("))
-                                                                                "v" (general-simulate-key ('evil-delete "i["))
-                                                                                "j" (general-simulate-key ('evil-delete "i<"))
-                                                                                "c"  'evil-delete-whole-line))
-
-(evil-define-key 'normal 'global "c" (general-key-dispatch 'evil-change
-                                                                                "q" (general-simulate-key ('evil-change "i\""))
-                                                                                "k" (general-simulate-key ('evil-change "i("))
-                                                                                "v" (general-simulate-key ('evil-change "i["))
-                                                                                "j" (general-simulate-key ('evil-change "i<"))
-                                                                                "r" (general-simulate-key ('evil-change "i'"))
-                                                                                "d" 'cd-to-buffer-dir
-                                                                                "c"  'evil-change-whole-line))
-
-(evil-define-key 'normal 'global "y" (general-key-dispatch 'evil-yank
-                                                                                "q" (general-simulate-key ('evil-yank "i\""))
-                                                                                "k" (general-simulate-key ('evil-yank "i("))
-                                                                                "v" (general-simulate-key ('evil-yank "i["))
-                                                                                "j" (general-simulate-key ('evil-yank "i<"))
-                                                                                "y"  'evil-yank-whole-line))
-
-(evil-define-key 'normal 'global "\C-t" 'run-eq-align)
 
 ;; A bunch of shitty functions to find code and configs faster
 ;; TODO make these a less turd macro or something
@@ -318,12 +287,12 @@
 ;------------------------------------
 ;                ESS
 ;------------------------------------
-;(use-package ess
-;             :init (require 'ess-site)
-;             :config
-;             (setq inferior-R-program-name "R_PATH_HERE")
-;             (setq ess-eval-visibly-p nil)
-;             :ensure ess)
+(use-package ess
+             :init (require 'ess-site)
+             :config
+             (setq inferior-R-program-name "/usr/bin/R")
+             (setq ess-eval-visibly-p nil)
+             :ensure ess)
 
 ;  (modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table))
 (defun ess-init-stuff()
@@ -353,7 +322,9 @@
 (defun cpp-init-stuff()
   (modify-syntax-entry ?_ "w" c++-mode-syntax-table)
   (setq-local company-backends '(company-lsp company-yasnippet company-dabbrev))
-  (setq c-basic-offset tab-width))
+  (setq c-basic-offset tab-width)
+  (lsp-mode)
+  (lsp))
 (add-hook 'c++-mode-hook 'cpp-init-stuff)
 
 (defun nxml-init-stuff()
@@ -385,7 +356,7 @@
   :ensure t
   :config (elpy-enable)
   (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
-  (setq python-shell-interpreter "ipython"
+  (setq python-shell-interpreter "ipython3"
         python-shell-interpreter-args "-i --simple-prompt"
         python-shell-prompt-detect-failure-warning nil)
   (add-to-list 'python-shell-completion-native-disabled-interpreters
@@ -413,23 +384,25 @@
 ;--------------------------------------------
 ;                   ORG-MODE
 ;--------------------------------------------
+(defface org-block-begin-line
+  '((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+  "face used for begin")
+(defface org-block-background
+ '((t (:background "#FFFFEA")))
+  "face used for background")
+(defface org-block-end-line
+ '((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+  "face used for end")
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (eval-after-load 'org '(require 'org-pdfview))
 (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda(file link) (org-pdfview-open link))))
+(setq org-pretty-entities t)
 (setq org-return-follows-link t)
-
-(setq org-mobile-directory "~/orgmobile")
-
-      ;(setq company-backends '(company-lsp company-elisp company-dabbrev))
+(setq org-src-fontify-natively t)
 
 (org-babel-do-load-languages
 'org-babel-load-languages '((R . t) (python . t)))
-
-(setq org-src-fontify-natively t)
-(setq org-pretty-entities t)
-
-(evil-define-key 'normal 'global (kbd "SPC c") 'org-cycle)
 
 ;--------------------------------------------
 ;                   YASNIPPET
@@ -448,7 +421,9 @@
   (setq company-idle-delay 0.0))
 
 (use-package lsp-mode
-  :ensure t)
+  :ensure t
+  :config
+  (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
 (require 'lsp-clients)
 
 (use-package helm-swoop
@@ -472,7 +447,16 @@
 
 (use-package magit
   :ensure t)
+
 (use-package evil-magit
+  :ensure t
+  :config
+  (evil-magit-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
+  (evil-magit-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
+  (evil-magit-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
+  (evil-magit-define-key 'normal 'magit-mode-map "D" 'evil--line))
+
+(use-package which-key
   :ensure t)
 
 
@@ -499,7 +483,7 @@
 ;------------------------------------------
 ;                   CFParser
 ;------------------------------------------
-(add-to-list 'load-path "/home/the_sf/src/cfparser")
+(add-to-list 'load-path "~/src/cfparser")
 (require 'cf-mode)
 
 
