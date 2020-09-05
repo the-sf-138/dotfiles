@@ -9,26 +9,30 @@
 
 (setq package-check-signature nil)
 
-
-
-(require 'bind-key)
 (require 'use-package)
-(require 'diminish)
+
+(use-package bind-key
+  :ensure t)
+(use-package diminish
+  :ensure t)
 
 ;; Packages used
 (use-package evil
   :ensure t
   :config (evil-mode))
 
-;(use-package evil-leader
-;  :ensure t
-;  :config (global-evil-leader-mode)
-;  (evil-leader/set-key "SPC"))
 
-(require 'general)          ; better remapping (used in delimiter stuff)
-(require 'hydra)            ; creating cool temporary mappings
-(require 'ace-jump-mode)    ; better vesion of ez motion
-(require 'ansi-color)
+(use-package hydra
+  :ensure t)
+; todo better compilation via hydra
+(evil-define-key 'normal 'c++-mode-map (kbd "SPC c SPC") 'recompile)
+
+
+(use-package ace-jump-mode
+  :ensure t)
+
+(use-package ansi-color
+  :ensure t)
 
 (setq ring-bell-function 'ignore)
 
@@ -223,6 +227,31 @@
 
 (defvar colemak-mode (load-file "~/.emacs.d/colemak-mode.el"))
 
+(use-package general
+  :ensure t
+  :config
+  (evil-define-key 'normal 'global "s" (general-key-dispatch 'evil-delete
+                                        "q" (general-simulate-key ('evil-delete "u\""))
+                                        "e" (general-simulate-key ('evil-delete "u("))
+                                        "v" (general-simulate-key ('evil-delete "u["))
+                                        "n" (general-simulate-key ('evil-delete "u<"))
+                                        "s" 'evil-delete-whole-line))
+  (evil-define-key 'normal 'global "c" (general-key-dispatch 'evil-change
+                                        "q" (general-simulate-key ('evil-change "u\""))
+                                        "e" (general-simulate-key ('evil-change "u("))
+                                        "v" (general-simulate-key ('evil-change "u["))
+                                        "n" (general-simulate-key ('evil-change "u<"))
+                                        "s" 'cd-to-buffer-dir
+                                        "c" 'evil-change-whole-line))
+  (evil-define-key 'normal 'global "j" (general-key-dispatch 'evil-yank
+                                        "q" (general-simulate-key ('evil-yank "u\""))
+                                        "e" (general-simulate-key ('evil-yank "u("))
+                                        "v" (general-simulate-key ('evil-yank "u["))
+                                        "n" (general-simulate-key ('evil-yank "u<"))
+                                        "j" 'evil-yank-whole-line)))
+
+
+
 (load-theme 'gruvbox t)
 (menu-bar-mode 1)
 
@@ -318,13 +347,41 @@
 
 (setq-default gdb-display-io-nopopup t) ; prevent annoying io buffer
 
+(use-package projectile
+  :ensure t)
+
+(use-package lsp-mode
+  :ensure t
+  :config
+  (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
+(require 'lsp-mode)
+
+(use-package lsp-ui
+  :ensure t
+  :config
+  (setq lsp-ui-doc-position 'top)
+  (setq lsp-ui-doc-alignment 'window))
+  
+
+(defun toggle-header-filename(filename)
+  (if (equal "C" (file-name-extension filename))
+      (concat (file-name-sans-extension filename) ".H")
+    (concat (file-name-sans-extension filename) ".C")))
+(defun is-cpp-ext(filename)
+  (let ((ext (file-name-extension filename)))
+    (or (equal ext "H") (equal ext "C"))))
+(defun toggle-header()
+  (interactive)
+  (let ((curr-file (buffer-file-name (current-buffer))))
+    (if (is-cpp-ext curr-file)
+        (find-file (toggle-header-filename curr-file)))))
+(evil-define-key '(normal) 'c++-mode-map (kbd "SPC hh") 'toggle-header)
+
 ;; so that underscores are considered part of the word
 (defun cpp-init-stuff()
   (modify-syntax-entry ?_ "w" c++-mode-syntax-table)
-  (setq-local company-backends '(company-lsp company-yasnippet company-dabbrev))
-  (setq c-basic-offset tab-width)
-  (lsp-mode)
-  (lsp))
+  (setq-local company-backends '(company-capf company-yasnippet company-dabbrev))
+  (setq c-basic-offset tab-width))
 (add-hook 'c++-mode-hook 'cpp-init-stuff)
 
 (defun nxml-init-stuff()
@@ -395,8 +452,6 @@
   "face used for end")
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(eval-after-load 'org '(require 'org-pdfview))
-(add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda(file link) (org-pdfview-open link))))
 (setq org-pretty-entities t)
 (setq org-return-follows-link t)
 (setq org-src-fontify-natively t)
@@ -420,11 +475,9 @@
   :config (global-company-mode)
   (setq company-idle-delay 0.0))
 
-(use-package lsp-mode
-  :ensure t
-  :config
-  (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
-(require 'lsp-clients)
+
+(use-package projectile
+  :ensure t)
 
 (use-package helm-swoop
   :ensure t
@@ -461,9 +514,11 @@
 
 
 ; Stuff for transparency
-; xcompgr -C &
 (set-frame-parameter (selected-frame) 'alpha '(85 85))
 (add-to-list 'default-frame-alist '(alpha 85 85))
+
+(evil-define-key 'motion 'global (kbd "C-+") 'text-scale-increase)
+(evil-define-key 'motion 'global (kbd "C--") 'text-scale-decrease)
 
 (use-package clang-format
   :ensure t)
@@ -499,7 +554,7 @@
  '(evil-snipe-mode t)
  '(package-selected-packages
    (quote
-    (evil-paredit intero lsp-ui company-lsp lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))))
+    (rmsbolt projectile evil-paredit intero lsp-ui lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
