@@ -266,6 +266,7 @@
 (use-package org-bullets
   :ensure t
   :init (add-hook 'org-mode-hook (lambda ()
+                                   (evil-define-key 'normal 'global (kbd "SPC p") 'org-preview-latex-fragment)
                                    (org-bullets-mode 1))))
 
 (defun print-major-mode()
@@ -353,7 +354,7 @@
 (use-package lsp-mode
   :ensure t
   :config
-  (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
+  (setq lsp-clients-clangd-executable "/usr/bin/clangd"))
 (require 'lsp-mode)
 
 (use-package lsp-ui
@@ -379,6 +380,7 @@
 
 ;; so that underscores are considered part of the word
 (defun cpp-init-stuff()
+  (linum-relative-mode)
   (modify-syntax-entry ?_ "w" c++-mode-syntax-table)
   (setq-local company-backends '(company-capf company-yasnippet company-dabbrev))
   (setq c-basic-offset tab-width))
@@ -457,7 +459,10 @@
 (setq org-src-fontify-natively t)
 
 (org-babel-do-load-languages
-'org-babel-load-languages '((R . t) (python . t)))
+ 'org-babel-load-languages '((R . t) (python . t)
+                             (jupyter . t)))
+(setq org-confirm-babel-evaluate nil)
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
 ;--------------------------------------------
 ;                   YASNIPPET
@@ -548,13 +553,43 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   (vector "#2d2d2d" "#f2777a" "#99cc99" "#ffcc66" "#6699cc" "#cc99cc" "#66cccc" "#cccccc"))
+ '(beacon-color "#f2777a")
+ '(custom-enabled-themes '(sanityinc-solarized-dark))
  '(custom-safe-themes
-   (quote
-    ("a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(evil-snipe-mode t)
+   '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
+ '(evil-snipe-mode nil)
+ '(fci-rule-color "#515151")
+ '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
+ '(frame-background-mode 'dark)
+ '(helm-completion-style 'emacs)
  '(package-selected-packages
-   (quote
-    (rmsbolt projectile evil-paredit intero lsp-ui lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))))
+   '(color-theme-sanityinc-solarized color-theme-sanityinc-tomorrow jupyter intero lsp-ui company-lsp lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   '((20 . "#f2777a")
+     (40 . "#f99157")
+     (60 . "#ffcc66")
+     (80 . "#99cc99")
+     (100 . "#66cccc")
+     (120 . "#6699cc")
+     (140 . "#cc99cc")
+     (160 . "#f2777a")
+     (180 . "#f99157")
+     (200 . "#ffcc66")
+     (220 . "#99cc99")
+     (240 . "#66cccc")
+     (260 . "#6699cc")
+     (280 . "#cc99cc")
+     (300 . "#f2777a")
+     (320 . "#f99157")
+     (340 . "#ffcc66")
+     (360 . "#99cc99")))
+ '(vc-annotate-very-old-color nil)
+ '(window-divider-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
