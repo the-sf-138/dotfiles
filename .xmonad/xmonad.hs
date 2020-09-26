@@ -14,6 +14,7 @@ import System.Exit
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
 import XMonad.Hooks.ManageDocks
+import XMonad.Actions.PhysicalScreens
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -21,7 +22,7 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal      = "yakuake"
+myTerminal      = "st"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -110,6 +111,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Expand the master area
     , ((modm,               xK_l     ), sendMessage Expand)
+
+    -- Dont show xmobar
+    , ((modm .|. shiftMask, xK_l     ), sendMessage ToggleStruts)
 
     -- Push window back into tiling
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
