@@ -354,7 +354,7 @@
 (use-package lsp-mode
   :ensure t
   :config
-  (setq lsp-clients-clangd-executable "/usr/bin/clangd"))
+  (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
 (require 'lsp-mode)
 
 (use-package lsp-ui
