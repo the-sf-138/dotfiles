@@ -251,6 +251,7 @@ myStartupHook = do
         spawnOnce "nitrogen --restore &"
         spawnOnce "compton &"
         spawnOnce "emacs --daemon"
+        spawnOnce "redshift -P -O 3000"
 
         
 
