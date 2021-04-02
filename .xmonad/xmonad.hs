@@ -14,6 +14,7 @@ import System.Exit
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
 import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.DynamicLog
 import XMonad.Actions.PhysicalScreens
 
 import qualified XMonad.StackSet as W
@@ -52,7 +53,17 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+-- myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+
+myWorkspaces :: [String]        
+myWorkspaces = clickable $ [
+  "<icon=/usr/share/icons/hicolor/16x16/apps/emacs.xpm/>",
+  "<icon=/usr/share/icons/hicolor/16x16/apps/chromium.xpm/>",
+                            "3","4","5"]
+  where                                                                       
+         clickable l = [ "<action=xdotool key alt+" ++ show (n) ++ ">" ++ ws ++ "</action>" |
+                             (i,ws) <- zip [1..5] l,                                        
+                            let n = i ]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
@@ -241,20 +252,14 @@ myEventHook = mempty
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
-myLogHook = return ()
 
 ------------------------------------------------------------------------
 -- Startup hook
-
--- Perform an arbitrary action each time xmonad starts or is restarted
--- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
--- per-workspace layout choices.
---
--- By default, do nothing.
 myStartupHook = do
         spawnOnce "nitrogen --restore &"
         spawnOnce "compton &"
         spawnOnce "emacs --daemon"
+        spawnOnce "dropbox"
         spawnOnce "redshift -P -O 3000"
 
         
@@ -265,8 +270,8 @@ myStartupHook = do
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-        xmproc <- spawnPipe "xmobar"
-        xmonad $ docks defaults
+        xmproc <- spawnPipe "/home/the_sf/.local/bin/xmobar"
+        xmonad $ docks $ defaults xmproc
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -274,7 +279,7 @@ main = do
 --
 -- No need to modify this.
 --
-defaults = def {
+defaults xm = def {
       -- simple stuff
         terminal           = myTerminal,
         focusFollowsMouse  = myFocusFollowsMouse,
@@ -282,6 +287,14 @@ defaults = def {
         borderWidth        = myBorderWidth,
         modMask            = myModMask,
         workspaces         = myWorkspaces,
+        logHook = dynamicLogWithPP xmobarPP
+                        { ppOutput = hPutStrLn xm
+                        , ppCurrent = xmobarColor "yellow" "" . wrap "[" "]"
+                        , ppHiddenNoWindows = xmobarColor "grey" ""
+                        , ppTitle   = xmobarColor "green"  "" . shorten 40
+                        , ppVisible = wrap "(" ")"
+                        , ppUrgent  = xmobarColor "red" "yellow"
+                        },
         normalBorderColor  = myNormalBorderColor,
         focusedBorderColor = myFocusedBorderColor,
 
@@ -293,7 +306,6 @@ defaults = def {
         layoutHook         = myLayout,
         manageHook         = myManageHook,
         handleEventHook    = myEventHook,
-        logHook            = myLogHook,
         startupHook        = myStartupHook
     }
 
