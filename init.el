@@ -50,17 +50,12 @@
 (use-package bash-completion
   :config (bash-completion-setup))
 
-; cool bar with mode name and stuff
-(use-package telephone-line
+                                        ; cool bar with mode name and stuff
+(use-package doom-modeline
   :ensure t
-  :config
-  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
-        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
-        telephone-line-primary-right-separator 'telephone-line-cubed-right
-        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
-  (setq telephone-line-height 24
-        telephone-line-evil-use-short-tag t)
-  (telephone-line-mode 1))
+  :init
+  (doom-modeline-mode 1)
+  (setq doom-modeline-icon t))
 
 (use-package linum-relative
   :ensure t
@@ -435,15 +430,6 @@
 (add-to-list 'auto-mode-alist '("\\.inc$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.I$" . c++-mode))
 
-;--------------------------------------------
-;                   SHELL
-;--------------------------------------------
-(defun tshell()
-  (interactive)
-  (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
-  (shell)
-  (rename-buffer new-shell-name))
-(evil-define-key 'normal 'global (kbd "SPC tm") 'tshell)
 
 
 
@@ -464,6 +450,10 @@
 (setq org-pretty-entities t)
 (setq org-return-follows-link t)
 (setq org-src-fontify-natively t)
+(setq org-todo-keywords
+      '((sequence "TODO" "WRITEUP" "|" "DONE")))
+
+(plist-put org-format-latex-options :scale 2)
 
 (org-babel-do-load-languages
  'org-babel-load-languages '((R . t) (python . t)
@@ -500,14 +490,13 @@
   (evil-define-key 'motion 'global (kbd "SPC /") 'evil-search-forward))
 
 ;; TODO get special shit so colemak mode works
-(use-package evil-snipe
-  :ensure t
-  :config
-  (evil-snipe-override-mode)
-  (turn-off-evil-snipe-mode)
-  (evil-snipe-mode -1)
-  (setq evil-snipe-scope 'whole-visible)
-  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+;(use-package evil-snipe
+;  :ensure t
+;  :config
+;  (evil-snipe-override-mode)
+;  (turn-off-evil-snipe-mode)
+;  (setq evil-snipe-scope 'whole-visible)
+;  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
 
 (use-package magit
@@ -554,17 +543,64 @@
 ;(require 'cf-mode)
 
 (evil-define-key 'normal 'global (kbd "SPC ag") 'helm-do-grep-ag)
+(global-hl-line-mode)
+
+(use-package vterm
+  :ensure t
+  :config (use-package multi-vterm
+            :ensure t)
+  (add-hook 'vterm-mode-hook (lambda()
+                             (message "Setting up vterm mode")
+                             (evil-collection-vterm-setup)
+                             (evil-define-key '(insert normal) 'local (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
+                             (evil-define-key '(insert normal) 'local (kbd "C-c C-c") 'vterm-send-C-c)
+                             )))
+;--------------------------------------------
+;                   SHELL
+;--------------------------------------------
+(defun tshell()
+  (interactive)
+  (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
+  (multi-vterm)
+  (rename-buffer new-shell-name))
+(evil-define-key 'normal 'global (kbd "SPC tm") 'tshell)
+
+
+(use-package tide
+  :ensure t)
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
+(add-hook 'js-mode-hook 'setup-tide-mode)
+
+(use-package lsp-haskell
+  :ensure t
+  :config (setq lsp-haskell-server-path "/home/the_sf/.local/bin/haskell-language-server"))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#3c3836" "#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#ebdbb2"])
+ '(custom-enabled-themes '(sanityinc-tomorrow-night))
  '(custom-safe-themes
-   '("a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
+   '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
  '(evil-snipe-mode t)
+ '(helm-completion-style 'emacs)
  '(package-selected-packages
-   '(multi-vterm evil-collection vterm ein jupyter intero lsp-ui company-lsp lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode)))
+   '(parrot rainbow-delimiters rainbow-mode origami matlab-mode auctex tide indium doom-modeline lsp-haskell org-pdftools multi-vterm evil-collection vterm ein jupyter intero lsp-ui company-lsp lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))
+ '(python-indent-guess-indent-offset-verbose nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
