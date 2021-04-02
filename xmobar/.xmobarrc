@@ -12,7 +12,7 @@ Config { font = "xft:Hack:size=9"
        , pickBroadest = False
        , persistent = False
        , hideOnStart = False
-       , iconRoot = "."
+       , iconRoot = "/home/the_sf/.icons"
        , allDesktops = True
        , overrideRedirect = True
        , commands = [ Run Weather "EGPF" ["-t","<station>: <tempC>C",
@@ -44,9 +44,10 @@ Config { font = "xft:Hack:size=9"
                     , Run Swap [] 10
                     , Run Com "uname" ["-s","-r"] "" 36000
                     , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+                    , Run UnsafeStdinReader
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "}\
+       , template = "%UnsafeStdinReader% }\
                     \{ %battery% | %cpu% | %memory% * %swap% | %enp3s0%  <fc=#ee9a00>%date%</fc>| %EGPF% | %uname%"
        }
