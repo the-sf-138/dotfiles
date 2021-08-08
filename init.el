@@ -222,6 +222,15 @@
 
 (defvar colemak-mode (load-file "~/.emacs.d/colemak-mode.el"))
 
+;; TODO get special shit so colemak mode works
+(use-package evil-snipe
+  :ensure t
+  :config
+  (evil-snipe-override-mode)
+  (turn-off-evil-snipe-mode)
+  (setq evil-snipe-scope 'whole-visible)
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+
 (use-package general
   :ensure t
   :config
@@ -464,7 +473,6 @@
 ;--------------------------------------------
 ;                   YASNIPPET
 ;--------------------------------------------
-;(setq tags-table-listi '())
 (use-package yasnippet
   :ensure t
   :config (yas-global-mode 1))
@@ -489,14 +497,6 @@
   (evil-define-key 'motion 'global (kbd "SPC") nil)
   (evil-define-key 'motion 'global (kbd "SPC /") 'evil-search-forward))
 
-;; TODO get special shit so colemak mode works
-;(use-package evil-snipe
-;  :ensure t
-;  :config
-;  (evil-snipe-override-mode)
-;  (turn-off-evil-snipe-mode)
-;  (setq evil-snipe-scope 'whole-visible)
-;  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
 
 (use-package magit
@@ -595,11 +595,11 @@
    ["#3c3836" "#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#ebdbb2"])
  '(custom-enabled-themes '(sanityinc-tomorrow-night))
  '(custom-safe-themes
-   '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
- '(evil-snipe-mode t)
+   '("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
+ '(evil-snipe-mode nil)
  '(helm-completion-style 'emacs)
  '(package-selected-packages
-   '(parrot rainbow-delimiters rainbow-mode origami matlab-mode auctex tide indium doom-modeline lsp-haskell org-pdftools multi-vterm evil-collection vterm ein jupyter intero lsp-ui company-lsp lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))
+   '(org-noter-pdftools rmsbolt parrot rainbow-delimiters rainbow-mode origami matlab-mode auctex tide indium doom-modeline lsp-haskell org-pdftools multi-vterm evil-collection vterm ein jupyter intero lsp-ui company-lsp lsp-mode clang-format leetcode lua-mode evil-magit magit evil-colemak-basics evil-colemak-minimal irony spacemacs-theme evil-snipe try yasnippet-snippets org-pdfview pdf-view-restore pdf-tools org-bullets evil-surround ess switch-window xterm-color use-package telephone-line soothe-theme modalka hydra helm haskell-mode gruvbox-theme general eyebrowse evil-visual-mark-mode evil-easymotion elpy doom disable-mouse diminish darktooth-theme color-theme bash-completion auto-complete ace-window ace-jump-mode))
  '(python-indent-guess-indent-offset-verbose nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -611,3 +611,6 @@
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+
+(setq matlab-shell-command "/usr/local/MATLAB/R2020b/bin/matlab")
+
