@@ -363,17 +363,9 @@
 
 * git
   #+BEGIN_SRC emacs-lisp
-
     (use-package magit
       :ensure t)
-
-    (use-package evil-magit
-      :ensure t
-      :config
-      (evil-magit-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
-      (evil-magit-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
-      (evil-magit-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
-      (evil-magit-define-key 'normal 'magit-mode-map "D" 'evil--line))
+    (evil-collections-magit-setup)
   #+END_SRC
 
 * javascript
