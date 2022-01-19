@@ -30,12 +30,10 @@
       (setq evil-insert-state-modes nil)
       (setq evil-normal-state-modes nil))
 
-    (defvar colemak-mode (load-file "~/.emacs.d/colemak-mode.el"))
-
     (use-package general
       :ensure t
       :config
-      (evil-define-key 'normal 'global "s" (general-key-dispatch 'evil-delete
+      (evil-define-key 'normal 'global "d" (general-key-dispatch 'evil-delete
                                              "q" (general-simulate-key ('evil-delete "u\""))
                                              "e" (general-simulate-key ('evil-delete "u("))
                                              "v" (general-simulate-key ('evil-delete "u["))
@@ -48,7 +46,7 @@
                                              "n" (general-simulate-key ('evil-change "u<"))
                                              "s" 'cd-to-buffer-dir
                                              "c" 'evil-change-whole-line))
-      (evil-define-key 'normal 'global "j" (general-key-dispatch 'evil-yank
+      (evil-define-key 'normal 'global "y" (general-key-dispatch 'evil-yank
                                              "q" (general-simulate-key ('evil-yank "u\""))
                                              "e" (general-simulate-key ('evil-yank "u("))
                                              "v" (general-simulate-key ('evil-yank "u["))
