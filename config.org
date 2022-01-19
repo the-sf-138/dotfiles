@@ -1,10 +1,10 @@
 #+TITLE: Emacs Config
 #+AUTHOR: sf
-#+PROPERTY: header-args:elisp :tangle "config.el"  :padline no :tangle-mode (identity #o755)
+#+PROPERTY: header-args:emacs-lisp :tangle "config.el"  :padline no :tangle-mode (identity #o755)
 #+OPTIONS: author:t date:t email:t H:3 num:nil toc:t ^:{}
 
 * package
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (require 'package)
     (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
     (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
@@ -21,7 +21,7 @@
   #+END_SRC
 
 * intra buffer navigation
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package evil
       :ensure t
       :config (evil-mode)
@@ -69,7 +69,7 @@
   #+END_SRC
   
 * buffer visuals
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package linum-relative
       :ensure t
       :config
@@ -112,7 +112,7 @@
   #+END_SRC
 
 * compilation-mode
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
 
     (setq compilation-skip-threshold 1)
     (setq compilation-scroll-output t)
@@ -128,7 +128,7 @@
   #+END_SRC
 
 * undo-tree
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package undo-tree
       :ensure t
       :config 
@@ -139,7 +139,7 @@
   #+END_SRC
 
 * shell
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (setq shell-file-name "zsh")
     (setq shell-command-switch "-ic")
     (setenv "PAGER" "cat")
@@ -164,7 +164,7 @@
   #+END_SRC
 
 * indentation
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (setq-default indent-tabs-mode nil)
     (setq-default tab-always-indent t)
     (setq-default tab-width 4)
@@ -173,7 +173,7 @@
   #+END_SRC
 
 * evil-snipe
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package evil-snipe
       :ensure t
       :config (evil-snipe-override-mode)
@@ -183,7 +183,7 @@
   #+END_SRC
 
 * org-mode
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
         (use-package org-bullets
           :ensure t
           :init (add-hook 'org-mode-hook (lambda ()
@@ -220,7 +220,7 @@
   #+END_SRC
 
 * switch-window
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package switch-window
       :ensure t
       :bind (
@@ -232,25 +232,25 @@
   #+END_SRC
 
 * projectile
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
         (use-package projectile
           :ensure t)
     (evil-define-key '(normal) 'global (kbd "SPC ag") 'projectile-ag)
   #+END_SRC
 
 * gdb
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (setq-default gdb-display-io-nopopup t) ; prevent annoying io buffer
   #+END_SRC
 
 * ein
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package ein
       :ensure t)
   #+END_SRC
 
 * c++-mode
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (defun toggle-header-filename(filename)
       (if (equal "C" (file-name-extension filename))
           (concat (file-name-sans-extension filename) ".H")
@@ -289,7 +289,7 @@
   #+END_SRC
 
 * nxml-mode
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (defun init-nxml-mode()
       (modify-syntax-entry ?_ "w" nxml-mode-syntax-table)
       (modify-syntax-entry ?' "'" nxml-mode-syntax-table))
@@ -297,7 +297,7 @@
   #+END_SRC
 
 * helm
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
 
     (use-package helm
       :ensure t
@@ -318,7 +318,7 @@
   #+END_SRC
 
 * elpy
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package elpy
       :ensure t
       :config (elpy-enable)
@@ -333,7 +333,7 @@
   #+END_SRC
 
 * yasnippet
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package yasnippet
       :ensure t
       :config (yas-global-mode 1))
@@ -343,7 +343,7 @@
   #+END_SRC
 
 * completion
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package company
       :ensure t
       :config (global-company-mode)
@@ -364,7 +364,7 @@
   #+END_SRC
 
 * git
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
 
     (use-package magit
       :ensure t)
@@ -379,7 +379,7 @@
   #+END_SRC
 
 * javascript
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package tide
       :ensure t)
     (defun setup-tide-mode ()
@@ -395,7 +395,7 @@
   #+END_SRC
 
 * haskell
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package lsp-haskell
       :ensure t
       :config (setq lsp-haskell-server-path "/home/the_sf/.local/bin/haskell-language-server"))
@@ -409,22 +409,22 @@
   #+END_SRC
 
 * matlab
-  #+BEGIN_SRC elisp
+  #+BEGIN_SRC emacs-lisp
     (use-package matlab-mode
       :ensure t
       :config (setq matlab-shell-command "/usr/local/MATLAB/R2020b/bin/matlab"))
   #+END_SRC
 
-* elisp-mode
-#+BEGIN_SRC elisp
-  (defun elisp-init-stuff()
+* emacs-lisp-mode
+#+BEGIN_SRC emacs-lisp
+  (defun emacs-lisp-init-stuff()
     (interactive)
     (linum-relative-mode)
     (rainbow-delimiters-mode))
-  (add-hook 'elisp-mode-hook 'elisp-init-stuff)
+  (add-hook 'emacs-lisp-mode-hook 'emacs-lisp-init-stuff)
 #+END_SRC
 * coq
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (defun coq-mode-init-stuff()
   (setq-local evil-insert-state-exit-hook (delete 'expand-abbrev evil-insert-state-exit-hook)))
   (add-hook 'coq-mode-hook 'coq-mode-init-stuff)
