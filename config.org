@@ -233,8 +233,9 @@
 
 * projectile
   #+BEGIN_SRC elisp
-    (use-package projectile
-      :ensure t)
+        (use-package projectile
+          :ensure t)
+    (evil-define-key '(normal) 'global (kbd "SPC ag") 'projectile-ag)
   #+END_SRC
 
 * gdb
@@ -395,10 +396,16 @@
 
 * haskell
   #+BEGIN_SRC elisp
-
     (use-package lsp-haskell
       :ensure t
       :config (setq lsp-haskell-server-path "/home/the_sf/.local/bin/haskell-language-server"))
+
+    (defun setup-haskell-mode ()
+      (lsp)
+      (linum-relative-mode)
+      (rainbow-delimiters-mode))
+
+    (add-hook 'haskell-mode-hook 'setup-haskell-mode)
   #+END_SRC
 
 * matlab
@@ -415,4 +422,10 @@
     (linum-relative-mode)
     (rainbow-delimiters-mode))
   (add-hook 'elisp-mode-hook 'elisp-init-stuff)
+#+END_SRC
+* coq
+#+BEGIN_SRC elisp
+  (defun coq-mode-init-stuff()
+  (setq-local evil-insert-state-exit-hook (delete 'expand-abbrev evil-insert-state-exit-hook)))
+  (add-hook 'coq-mode-hook 'coq-mode-init-stuff)
 #+END_SRC
