@@ -305,8 +305,8 @@
       :config (elpy-enable)
       (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
       (setq elpy-rpc-python-command "/data/data/com.termux/files/usr/bin/python3")
-       (setq python-shell-interpreter "ipython3"
-             python-shell-interpreter-args "-i --simple-prompt"
+       (setq python-shell-interpreter "/data/data/com.termux/files/usr/bin/python3"
+             python-shell-interpreter-args "-i"
              python-shell-prompt-detect-failure-warning nil)
        (add-to-list 'python-shell-completion-native-disabled-interpreters
                     "jupyter")
