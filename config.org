@@ -142,23 +142,6 @@
     (setq shell-command-switch "-ic")
     (setenv "PAGER" "cat")
 
-
-    (use-package vterm
-      :ensure t
-      :config (use-package multi-vterm
-                :ensure t)
-      (add-hook 'vterm-mode-hook (lambda()
-                                   (message "Setting up vterm mode")
-                                   (evil-collection-vterm-setup)
-                                   (evil-define-key '(insert normal) 'local (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
-                                   (evil-define-key '(insert normal) 'local (kbd "C-c C-c") 'vterm-send-C-c))))
-
-    (defun tshell()
-      (interactive)
-      (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
-      (multi-vterm)
-      (rename-buffer new-shell-name))
-    (evil-define-key 'normal 'global (kbd "SPC tm") 'tshell)
   #+END_SRC
 
 * indentation
@@ -321,12 +304,13 @@
       :ensure t
       :config (elpy-enable)
       (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
-      (setq python-shell-interpreter "ipython3"
-            python-shell-interpreter-args "-i --simple-prompt"
-            python-shell-prompt-detect-failure-warning nil)
-      (add-to-list 'python-shell-completion-native-disabled-interpreters
-                   "jupyter")
-      (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on))
+      (setq elpy-rpc-python-command "/data/data/com.termux/files/usr/bin/python3")
+       (setq python-shell-interpreter "ipython3"
+             python-shell-interpreter-args "-i --simple-prompt"
+             python-shell-prompt-detect-failure-warning nil)
+       (add-to-list 'python-shell-completion-native-disabled-interpreters
+                    "jupyter")
+       (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on))
 
   #+END_SRC
 
@@ -396,13 +380,6 @@
       (rainbow-delimiters-mode))
 
     (add-hook 'haskell-mode-hook 'setup-haskell-mode)
-  #+END_SRC
-
-* matlab
-  #+BEGIN_SRC emacs-lisp
-    (use-package matlab-mode
-      :ensure t
-      :config (setq matlab-shell-command "/usr/local/MATLAB/R2020b/bin/matlab"))
   #+END_SRC
 
 * emacs-lisp-mode
