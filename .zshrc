@@ -1,4 +1,4 @@
-export ZSH=/home/timothy/.oh-my-zsh
+export ZSH=/home/the_sf/.oh-my-zsh
 ZSH_THEME="lambda"
 plugins=(git)
 

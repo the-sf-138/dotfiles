@@ -65,6 +65,7 @@
 
     (use-package origami
       :ensure t)
+    ;(evil-define-key '(normal motion) 'global (kbd "TAB") 'origami-toggle-node)
 
   #+END_SRC
   
@@ -153,7 +154,8 @@
                                    (message "Setting up vterm mode")
                                    (evil-collection-vterm-setup)
                                    (evil-define-key '(insert normal) 'local (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
-                                   (evil-define-key '(insert normal) 'local (kbd "C-c C-c") 'vterm-send-C-c))))
+                                   (evil-define-key '(insert normal) 'local (kbd "C-c C-c") 'vterm-send-C-c))
+                (evil-define-key '(insert normal) 'local (kbd "C-v") 'vterm-yank)))
 
     (defun tshell()
       (interactive)
@@ -214,7 +216,7 @@
 
         (org-babel-do-load-languages
          'org-babel-load-languages '((R . t) (python . t)
-                                     (ein . t)))
+                                     ))
         (setq org-confirm-babel-evaluate nil)
         (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
   #+END_SRC
@@ -323,7 +325,7 @@
       :ensure t
       :config (elpy-enable)
       (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
-      (setq python-shell-interpreter "ipython3"
+      (setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
             python-shell-interpreter-args "-i --simple-prompt"
             python-shell-prompt-detect-failure-warning nil)
       (add-to-list 'python-shell-completion-native-disabled-interpreters
@@ -374,6 +376,7 @@
       :config
       (evil-magit-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
       (evil-magit-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
+      (evil-magit-define-key 'normal 'magit-mode-map "i" 'evil-forward-char)
       (evil-magit-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
       (evil-magit-define-key 'normal 'magit-mode-map "D" 'evil--line))
   #+END_SRC
@@ -428,4 +431,22 @@
   (defun coq-mode-init-stuff()
   (setq-local evil-insert-state-exit-hook (delete 'expand-abbrev evil-insert-state-exit-hook)))
   (add-hook 'coq-mode-hook 'coq-mode-init-stuff)
+#+END_SRC
+
+* code forces
+#+BEGIN_SRC elisp
+(defun cf-compile()
+  (let* ((fname (buffer-name (current-buffer)))
+         (problem (file-name-sans-extension fname))
+         (command (concat "cf --problem " problem)))
+    (compile command)))
+#+END_SRC
+
+* rust
+#+BEGIN_SRC elisp
+  (defun rust-init-stuff()
+    (lsp)
+    (linum-relative-mode 1)
+    (rainbow-delimiters-mode 1))
+  (add-hook 'rustic-mode-hook 'rust-init-stuff)
 #+END_SRC
