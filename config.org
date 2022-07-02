@@ -60,8 +60,6 @@
       :config (evil-define-key '(normal) 'global (kbd "SPC n") 'ace-jump-mode))
 
 
-    (use-package evil-collection
-      :ensure t)
 
     (use-package origami
       :ensure t)
@@ -369,16 +367,14 @@
   #+BEGIN_SRC elisp
 
     (use-package magit
-      :ensure t)
-
-    (use-package evil-magit
       :ensure t
       :config
-      (evil-magit-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
-      (evil-magit-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
-      (evil-magit-define-key 'normal 'magit-mode-map "i" 'evil-forward-char)
-      (evil-magit-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
-      (evil-magit-define-key 'normal 'magit-mode-map "D" 'evil--line))
+      (evil-collection-magit-setup)
+      (evil-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
+      (evil-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
+      (evil-define-key 'normal 'magit-mode-map "i" 'evil-forward-char)
+      (evil-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
+      (evil-define-key 'normal 'magit-mode-map "D" 'evil--line))
   #+END_SRC
 
 * javascript
