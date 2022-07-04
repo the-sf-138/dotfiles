@@ -143,6 +143,8 @@
     (setq shell-command-switch "-ic")
     (setenv "PAGER" "cat")
 
+    (use-package evil-collection :ensure t)
+
 
     (use-package vterm
       :ensure t
@@ -374,7 +376,7 @@
       (evil-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
       (evil-define-key 'normal 'magit-mode-map "i" 'evil-forward-char)
       (evil-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
-      (evil-define-key 'normal 'magit-mode-map "D" 'evil--line))
+      (evil-define-key 'normal 'magit-mode-map "D" 'evil-goto-line))
   #+END_SRC
 
 * javascript
