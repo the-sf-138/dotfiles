@@ -442,8 +442,16 @@
 
 * rust
 #+BEGIN_SRC elisp
+  (use-package rustic
+    :ensure t)
+
+  (use-package eglot
+    :ensure t)
+
+  (setq rustic-lsp-client 'eglot)
+  (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
+
   (defun rust-init-stuff()
-    (lsp)
     (linum-relative-mode 1)
     (rainbow-delimiters-mode 1))
   (add-hook 'rustic-mode-hook 'rust-init-stuff)
