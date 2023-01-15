@@ -2,7 +2,10 @@ export ZSH=/home/the_sf/.oh-my-zsh
 ZSH_THEME="lambda"
 plugins=(git)
 
+DISABLE_UPDATE_PROMPT=true
 source $ZSH/oh-my-zsh.sh
+DISABLE_UPDATE_PROMPT=true
+
 setxkbmap -option ctrl:nocaps
 set -o vi
 alias clip="xclip -selection c"
