@@ -52,7 +52,10 @@
     (handle-stuff 'normal)
     (handle-stuff 'visual)
     (handle-stuff 'operator)
-    (evil-define-key 'motion 'global (kbd "dd") 'evil-goto-first-line))
+    (evil-define-key 'motion 'global (kbd "dd") 'evil-goto-first-line)
+    (evil-define-key 'motion 'global (kbd ".") 'evil-repeat)
+    (evil-define-key 'motion 'global (kbd "l") 'undo-tree-undo)
+    (evil-define-key 'motion 'global (kbd "C-r") 'undo-tree-redo))
 
 (do-evil-remap)
 

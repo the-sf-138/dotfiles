@@ -286,7 +286,8 @@
       (interactive)
       (let ((bounds (bounds-of-thing-at-point 'paragraph)))
         (clang-format-region (car bounds) (cdr bounds))))
-    (evil-define-key 'normal 'global (kbd "SPC fr") 'clang-format-region-at-point)
+    (evil-define-key 'normal 'global (kbd "SPC fr") nil)
+    (evil-define-key 'normal 'c++-mode-map (kbd "SPC fr") 'clang-format-region-at-point)
 
   #+END_SRC
 
@@ -331,6 +332,10 @@
       (add-to-list 'python-shell-completion-native-disabled-interpreters
                    "jupyter")
       (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on))
+    (add-hook 'python-mode-hook (lambda()
+                                  (linum-relative-mode)
+                                  (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
+                              
 
   #+END_SRC
 
@@ -450,9 +455,16 @@
 
   (setq rustic-lsp-client 'eglot)
   (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
+  (add-hook 'eglot-managed-mode-hook (lambda () (flymake-mode -1)))
 
   (defun rust-init-stuff()
+    (require 'eglot)
+    (message "astart")
+    (modify-syntax-entry ?_ "w" rustic-mode-syntax-table)
+    (eglot-ensure)
     (linum-relative-mode 1)
+    (evil-define-key 'normal 'rustic-mode-map (kbd "SPC fr") 'rustic-format-region)
     (rainbow-delimiters-mode 1))
+
   (add-hook 'rustic-mode-hook 'rust-init-stuff)
 #+END_SRC
