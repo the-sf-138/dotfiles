@@ -484,7 +484,7 @@
 (defun edit-config-file()
   (interactive)
   (find-file "/home/the_sf/src/dotfiles/config.org"))
-(evil-define-key 'normal 'global (kdb "C-c SPC c") 'edit-config-file)
+(evil-define-key 'normal 'global (kbd "C-c SPC c") 'edit-config-file)
 
 (defun reload-emacs-config()
   (interactive)
@@ -532,3 +532,14 @@
 
 #+end_src
 
+
+* chatgpt shell
+#+begin_src  elisp
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-api-key (with-temp-buffer
+                        (insert-file-contents  "/home/the_sf/keys/open-ai/emacs-key-2")
+                        (buffer-string)))
+  (setq gptel-default-mode 'org-mode))
+#+end_src
