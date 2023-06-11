@@ -46,6 +46,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(85 85))
 (add-to-list 'default-frame-alist '(alpha 85 85))
+(add-hook 'after-make-frame-functions (lambda (frame)
+                                        (set-frame-font "Hack 14" t (list frame))))
 
 (evil-define-key 'motion 'global (kbd "C-+") 'text-scale-increase)
 (evil-define-key 'motion 'global (kbd "C--") 'text-scale-decrease)
@@ -157,8 +159,8 @@
     (evil-define-key 'motion 'global (kbd "?") 'helm-swoop-from-isearch)
     (evil-define-key 'motion 'global (kbd "SPC") nil)
     (evil-define-key 'motion 'global (kbd "SPC /") 'evil-search-forward)))
-(after! elpy
-  (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
+
+(after! python-mode
   (modify-syntax-entry ?_ "w" python-mode-syntax-table)
   (setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
         python-shell-interpreter-args "-i --simple-prompt"
@@ -167,7 +169,6 @@
                "jupyter")
   (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on)
   (add-hook 'python-mode-hook (lambda()
-                                (linum-relative-mode)
                                 (modify-syntax-entry ?_ "w" python-mode-syntax-table))))
 (after! company
         (setq company-idle-delay 0.1
@@ -245,3 +246,7 @@
                               (insert-file-contents  "/home/the_sf/keys/open-ai/emacs-key-2")
                               (buffer-string)))
         (setq gptel-default-mode 'org-mode))
+
+
+(after! linum-relative
+        (setq linum-relative-backend 'display-line-numbers-mode))

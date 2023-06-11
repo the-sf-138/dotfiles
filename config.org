@@ -99,6 +99,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(85 85))
 (add-to-list 'default-frame-alist '(alpha 85 85))
+(add-hook 'after-make-frame-functions (lambda (frame)
+                                        (set-frame-font "Hack 14" t (list frame))))
 
 (evil-define-key 'motion 'global (kbd "C-+") 'text-scale-increase)
 (evil-define-key 'motion 'global (kbd "C--") 'text-scale-decrease)
@@ -307,24 +309,17 @@
       (evil-define-key 'motion 'global (kbd "SPC /") 'evil-search-forward))
   #+END_SRC
 
-* elpy
+* python
   #+BEGIN_SRC elisp
-    (use-package elpy
-      :ensure t
-      :config (elpy-enable)
-      (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
-      (modify-syntax-entry ?_ "w" python-mode-syntax-table)
-      (setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
-            python-shell-interpreter-args "-i --simple-prompt"
-            python-shell-prompt-detect-failure-warning nil)
-      (add-to-list 'python-shell-completion-native-disabled-interpreters
-                   "jupyter")
-      (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on))
-    (add-hook 'python-mode-hook (lambda()
-                                  (linum-relative-mode)
-                                  (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
-                              
-
+(setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
+      python-shell-interpreter-args "-i --simple-prompt"
+      python-shell-prompt-detect-failure-warning nil)
+(add-to-list 'python-shell-completion-native-disabled-interpreters
+             "jupyter")
+(add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on)
+(add-hook 'python-mode-hook (lambda()
+                              (linum-relative-mode)
+                              (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
   #+END_SRC
 
 * yasnippet

@@ -74,3 +74,7 @@
 (package! general)
 
 (package! lsp-mode)
+
+(package! org-bullets)
+
+(package! linum-relative-mode)
