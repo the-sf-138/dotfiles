@@ -9,6 +9,15 @@
               evil-insert-state-modes nil
               evil-normal-state-modes nil)
         (defvar colemak-mode (load-file "~/.emacs.d/colemak-mode.el"))
+        (evil-define-key 'normal 'global (kbd ":") 'evil-paste-before)
+        (evil-define-key 'normal 'global (kbd ".") 'evil-repeat)
+        (evil-define-key 'normal 'global (kbd ",") 'evil-repeat-find-char-reverse)
+
+        ; disable evil-embrace stuff
+        (setq! evil-want-Y-yank-to-eol nil)
+        (evil-define-key 'motion 'global (kbd "g") 'evil-find-char-to)
+        (remove-hook 'evil-local-mode-hook #'turn-on-evil-embrace-mode)
+
         (after! general
                 (evil-define-key 'normal 'global "s" (general-key-dispatch 'evil-delete
                                                        "q" (general-simulate-key ('evil-delete "u\""))
@@ -69,7 +78,6 @@
           (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
           (multi-vterm)
           (rename-buffer new-shell-name))
-
         (after! evil
                 (evil-define-key 'normal 'global (kbd "SPC s") 'tshell)
                 ))
@@ -155,10 +163,11 @@
 (add-hook 'nxml-mode-hook 'init-nxml-mode)
 (after! evil
   (after! helm-swoop
-    (evil-define-key 'motion 'global (kbd "/") 'helm-swoop-without-pre-input)
-    (evil-define-key 'motion 'global (kbd "?") 'helm-swoop-from-isearch)
-    (evil-define-key 'motion 'global (kbd "SPC") nil)
-    (evil-define-key 'motion 'global (kbd "SPC /") 'evil-search-forward)))
+    (evil-define-key '(normal motion) 'global (kbd "/") 'helm-swoop-without-pre-input)
+    (evil-define-key '(normal motion) 'global (kbd "?") 'helm-swoop-from-isearch)
+    (evil-define-key '(normal motion) 'global (kbd "SPC") nil)
+    (evil-define-key '(normal motion) 'global (kbd "SPC /") 'evil-search-forward)))
+
 
 (after! python-mode
   (modify-syntax-entry ?_ "w" python-mode-syntax-table)
