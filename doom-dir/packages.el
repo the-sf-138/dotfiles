@@ -76,5 +76,17 @@
 (package! lsp-mode)
 
 (package! org-bullets)
+(package! org-agend :disable t)
 
 (package! linum-relative-mode)
+
+(package! rjsx-mode)
+
+(package! switch-window)
+
+(package! avy)
+
+(package! helm-swoop)
+(package! undo-tree)
+
+(package! pyvenv)
