@@ -60,7 +60,7 @@
   :ensure t
   :config (setq avy-keys '(?r ?s ?t ?n ?e ?i))
   (evil-define-key '(normal) 'global (kbd "SPC n") 'avy-goto-word-1)
-  (evil-define-key '(normal) 'global (kbd "SPC e") 'avy-goto-char-1)
+  (evil-define-key '(normal) 'global (kbd "SPC e") 'avy-goto-char)
   (evil-define-key '(normal) 'global (kbd "SPC t") 'avy-goto-char-2))
 
 
@@ -161,7 +161,7 @@
       (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
       (multi-vterm)
       (rename-buffer new-shell-name))
-    (evil-define-key 'normal 'global (kbd "SPC tm") 'tshell)
+    (evil-define-key 'normal 'global (kbd "SPC s") 'tshell)
   #+END_SRC
 
 * indentation
@@ -270,7 +270,8 @@
 
     (use-package clang-format
       :ensure t)
-    (evil-define-key 'normal 'global (kbd "SPC ff") 'clang-format-buffer)
+    (evil-define-key 'normal 'c++-mode-map (kbd "SPC ff") 'clang-format-buffer)
+    (evil-define-key 'normal 'python-mode-map (kbd "SPC ff") 'python-black-buffer)
 
     (defun clang-format-region-at-point()
       (interactive)
@@ -312,20 +313,22 @@
 
 * elpy
   #+BEGIN_SRC elisp
-    (use-package elpy
-      :ensure t
-      :config (elpy-enable)
-      (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
-      (setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
-            python-shell-interpreter-args "-i --simple-prompt"
-            python-shell-prompt-detect-failure-warning nil)
-      (add-to-list 'python-shell-completion-native-disabled-interpreters
-                   "jupyter")
-      (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on))
-    (add-hook 'python-mode-hook (lambda()
-                                  (linum-relative-mode)
-                                  (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
-                              
+(use-package elpy
+  :ensure t
+  :config (elpy-enable)
+  (setenv "IPY_TEST_SIMPLE_PROMPT" nil)
+  (setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
+        python-shell-interpreter-args "-i --simple-prompt"
+        python-shell-prompt-detect-failure-warning nil)
+  (add-to-list 'python-shell-completion-native-disabled-interpreters
+               "jupyter")
+  (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on))
+(add-hook 'python-mode-hook (lambda()
+                              (lsp)
+                              (linum-relative-mode)
+                              (tree-sitter-hl-mode)
+                              (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
+
 
   #+END_SRC
 
