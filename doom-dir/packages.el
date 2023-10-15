@@ -50,6 +50,11 @@
 ;(unpin! t)
 
 
+(package! pyvenv)
+(package! ansi-color)
+(package! posframe)
+(package! evil-owl)
+
 (package! general)
 (package! evil-snipe :disable t)
 
@@ -89,4 +94,3 @@
 (package! helm-swoop)
 (package! undo-tree)
 
-(package! pyvenv)
