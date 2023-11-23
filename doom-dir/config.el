@@ -24,10 +24,10 @@
   (setq! evil-want-Y-yank-to-eol nil))
 
 (defun saving-special-register(f)
-    `(lambda() (interactive)
-      (evil-set-register ?t (evil-get-register ?\"))
-      (call-interactively ,f)
-      (evil-set-register ?\" (evil-get-register ?t))))
+  `(lambda() (interactive)
+     (evil-set-register ?t (evil-get-register ?\"))
+     (call-interactively ,f)
+     (evil-set-register ?\" (evil-get-register ?t))))
 
 (use-package! general
   :config
@@ -77,14 +77,20 @@
                                        (evil-collection-vterm-setup)
                                        (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
                                        (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-c") 'vterm-send-C-c)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-v") 'vterm-yank)))))
-(after! multi-vterm
-  (defun tshell()
-    (interactive)
-    (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
-    (multi-vterm)
-    (rename-buffer new-shell-name))
-  (define-key! doom-leader-map "s" #'tshell))
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-<escape>") 'vterm-copy-mode)
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-v") 'vterm-yank)
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "M-:") 'eval-expression)
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-t") 'start-ab-popup)
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-x C-f") 'find-file))
+                                   ))
+  (after! multi-vterm
+    (defun tshell()
+      (interactive)
+      (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
+      (multi-vterm)
+      (rename-buffer new-shell-name))
+    (define-key! doom-leader-map "s" #'tshell))
+  )
 
 (use-package! org-bullets
   :hook (org-mode-hook . (lambda ()
@@ -158,14 +164,14 @@
   (let ((bounds (bounds-of-thing-at-point 'paragraph)))
     (clang-format-region (car bounds) (cdr bounds))))
 
-(after! clang-format
-  (add-hook! c++-mode-hook
-    (progn
-      (message "setting doom leader map hooks")
-      (define-key! doom-leader-map "f f" nil)
-      (define-key! doom-leader-map "f f" #'clang-format-buffer)
-      (define-key! doom-leader-map "f r" nil)
-      (define-key! doom-leader-map "f r" #'clang-format-region-at-point))))
+(use-package! clang-format
+  :config (add-hook 'c++-mode-hook
+                    (lambda()
+                      (message "setting doom leader map hooks")
+                      (define-key! doom-leader-map "f f" nil)
+                      (define-key! doom-leader-map "f f" #'clang-format-buffer)
+                      (define-key! doom-leader-map "f r" nil)
+                      (define-key! doom-leader-map "f r" #'clang-format-region-at-point))))
 
 (defun init-nxml-mode()
   (modify-syntax-entry ?_ "w" nxml-mode-syntax-table)
@@ -201,7 +207,7 @@
   (after! company-prescient
     (setq history-length 1000
           prescient-history-length 1000)))
-(after! magit 
+(after! magit
   (evil-collection-magit-setup)
   (evil-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
   (evil-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
@@ -305,7 +311,7 @@
 (set-frame-font "Hack 14")
 
 
-; A helm menu for finding the right shell buffer
+                                        ; A helm menu for finding the right shell buffer
 (defun select-vterm-buffer--format (buffer)
   (let* ((bname (buffer-name buffer))
          (bdir (buffer-local-value 'default-directory buffer))
@@ -328,19 +334,19 @@
                                     vterm-buffers)))
     (helm :sources
           (helm-build-sync-source "Buffer"
-            :candidates selection-options
-            :action (lambda (candidate)
-                      (switch-to-buffer candidate)))
+                                  :candidates selection-options
+                                  :action (lambda (candidate)
+                                            (switch-to-buffer candidate)))
           :prompt "Select a vterm buffer: ")))
 
-; A popup window for querying chatgpt
+                                        ; A popup window for querying chatgpt
 (defvar ab-popup-name "*ab-popup-buffer*")
 (defun setup-ab-buffer()
   (with-current-buffer (get-buffer-create ab-popup-name)
-    (erase-buffer)
     (org-mode)
     (gptel-mode)
-    (insert "*** ")))
+    (insert "*** ")
+    (evil-insert 1)))
 
 (posframe-hide ab-popup-name)
 
@@ -349,7 +355,7 @@
   (when (posframe-workable-p)
     (posframe-show ab-popup-name
                    :position (point)
-                   :width 40
+                   :width 80
                    :height 30
                    :border-width 5
                    :border-color "#A7A6AA"
@@ -361,7 +367,7 @@
 (defun select-ab-popup-frame()
   (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
     (select-frame-set-input-focus misc-posframe-frame)
-    (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c C-k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
+    (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c SPC k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
 
 
 (defun start-ab-popup()
@@ -371,3 +377,9 @@
   (select-ab-popup-frame))
 
 (evil-define-key 'normal 'emacs-lisp-mode-map (kbd "C-c C-t") 'start-ab-popup)
+
+
+
+(define-key! doom-leader-map "c" nil)
+(define-key! doom-leader-map "c SPC" nil)
+(define-key! doom-leader-map "c SPC c" 'recompile)
