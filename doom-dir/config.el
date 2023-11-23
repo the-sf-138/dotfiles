@@ -1,6 +1,5 @@
 
 (straight-use-package 'undo-tree)
-(straight-use-package 'posframe)
 (straight-use-package 'evil-owl)
 
 (use-package! undo-tree
@@ -24,10 +23,10 @@
   (setq! evil-want-Y-yank-to-eol nil))
 
 (defun saving-special-register(f)
-    `(lambda() (interactive)
-      (evil-set-register ?t (evil-get-register ?\"))
-      (call-interactively ,f)
-      (evil-set-register ?\" (evil-get-register ?t))))
+  `(lambda() (interactive)
+     (evil-set-register ?t (evil-get-register ?\"))
+     (call-interactively ,f)
+     (evil-set-register ?\" (evil-get-register ?t))))
 
 (use-package! general
   :config
@@ -77,48 +76,49 @@
                                        (evil-collection-vterm-setup)
                                        (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
                                        (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-c") 'vterm-send-C-c)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-v") 'vterm-yank)))))
-(after! multi-vterm
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-v") 'vterm-yank)
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-x C-f") 'helm-find-files)
+                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "M-:") nil))))
   (defun tshell()
     (interactive)
     (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
     (multi-vterm)
     (rename-buffer new-shell-name))
-  (define-key! doom-leader-map "s" #'tshell))
+  (define-key! doom-leader-map "s" #'tshell)
 
-(use-package! org-bullets
-  :hook (org-mode-hook . (lambda ()
-                           (evil-define-key 'normal 'global (kbd "SPC p") 'org-preview-latex-fragment)
-                           (defface org-block-begin-line
-                             '((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
-                             "face used for begin")
-                           (defface org-block-background
-                             '((t (:background "#FFFFEA")))
-                             "face used for background")
-                           (defface org-block-end-line
-                             '((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
-                             "face used for end")
-                           )))
+  (use-package! org-bullets
+    :hook (org-mode-hook . (lambda ()
+                             (evil-define-key 'normal 'global (kbd "SPC p") 'org-preview-latex-fragment)
+                             (defface org-block-begin-line
+                               '((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+                               "face used for begin")
+                             (defface org-block-background
+                               '((t (:background "#FFFFEA")))
+                               "face used for background")
+                             (defface org-block-end-line
+                               '((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+                               "face used for end")
+                             )))
 
 
-(after! org
-  (setq org-pretty-entities t)
-  (setq org-return-follows-link t)
-  (setq org-src-fontify-natively t)
-  (setq org-src-preserve-indentation t)
-  (setq org-todo-keywords
-        '((sequence "TODO" "WRITEUP" "|" "DONE")))
+  (after! org
+    (setq org-pretty-entities t)
+    (setq org-return-follows-link t)
+    (setq org-src-fontify-natively t)
+    (setq org-src-preserve-indentation t)
+    (setq org-todo-keywords
+          '((sequence "TODO" "WRITEUP" "|" "DONE")))
 
-  (plist-put org-format-latex-options :scale 2)
+    (plist-put org-format-latex-options :scale 2)
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages '((R . t) (python . t)
-                               ))
-  (setq org-confirm-babel-evaluate nil)
-  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append))
+    (org-babel-do-load-languages
+     'org-babel-load-languages '((R . t) (python . t)
+                                 ))
+    (setq org-confirm-babel-evaluate nil)
+    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append))
 
-(after! switch-window
-  (after! evil
+  (use-package! switch-window
+    :config
     (evil-define-key 'normal 'global (kbd "C-x o") 'switch-window)
     (setq-default switch-window-shortcut-style 'qwerty)
     (setq-default switch-window-qwerty-shortcuts '("a" "s" "d" "f" "j" "k" "l" "w" "e" "i" "o"))
@@ -172,15 +172,15 @@
   (modify-syntax-entry ?' "'" nxml-mode-syntax-table))
 (add-hook 'nxml-mode-hook 'init-nxml-mode)
 
-(after! evil
-  (after! avy
-    (define-key! doom-leader-map "n" #'avy-goto-word-1)
-    (define-key! doom-leader-map "e" #'avy-goto-char-1)
-    (define-key! doom-leader-map "t" #'avy-goto-char-2)
-    (map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
-    (map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
-    (map! :map helm-swoop--basic-map "C-n" #'helm-next-line)
-    (map! :map helm-swoop--basic-map "C-p" #'helm-previous-line)))
+(use-package! avy
+  :config
+  (define-key! doom-leader-map "n" #'avy-goto-word-1)
+  (define-key! doom-leader-map "e" #'avy-goto-char-1)
+  (define-key! doom-leader-map "t" #'avy-goto-char-2)
+  (map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
+  (map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
+  (map! :map helm-swoop--basic-map "C-n" #'helm-next-line)
+  (map! :map helm-swoop--basic-map "C-p" #'helm-previous-line))
 
 (after! python-mode
   (modify-syntax-entry ?_ "w" python-mode-syntax-table)
@@ -264,10 +264,11 @@
           "https://www.allendowney.com/blog/feed/"
           "https://almostsuremath.com/feed/"
           )))
-(after! gptel
-  (setq gptel-api-key (with-temp-buffer
-                        (insert-file-contents  "/home/the_sf/keys/open-ai/emacs-key-2")
-                        (buffer-string)))
+(use-package! gptel
+  :config
+  (setq! gptel-api-key (with-temp-buffer
+                         (insert-file-contents  "/home/the_sf/keys/open-ai/emacs-key-2")
+                         (string-trim-right (buffer-string) "\n")))
   (setq gptel-default-mode 'org-mode))
 
 
@@ -305,7 +306,7 @@
 (set-frame-font "Hack 14")
 
 
-; A helm menu for finding the right shell buffer
+                                        ; A helm menu for finding the right shell buffer
 (defun select-vterm-buffer--format (buffer)
   (let* ((bname (buffer-name buffer))
          (bdir (buffer-local-value 'default-directory buffer))
@@ -333,41 +334,57 @@
                       (switch-to-buffer candidate)))
           :prompt "Select a vterm buffer: ")))
 
-; A popup window for querying chatgpt
-(defvar ab-popup-name "*ab-popup-buffer*")
-(defun setup-ab-buffer()
-  (with-current-buffer (get-buffer-create ab-popup-name)
-    (erase-buffer)
-    (org-mode)
-    (gptel-mode)
-    (insert "*** ")))
+                                        ; A popup window for querying chatgpt
+(use-package! posframe
+  :config
+  (defvar ab-popup-name "*ab-popup-buffer*")
+  (defun setup-ab-buffer()
+    (with-current-buffer (get-buffer-create ab-popup-name)
+      (erase-buffer)
+      (org-mode)
+      (gptel-mode)
+      (insert "*** ")))
+  (posframe-hide ab-popup-name)
+  (defun create-ab-popup-frame()
+    (when (posframe-workable-p)
+      (posframe-show ab-popup-name
+                     :position (point)
+                     :width 40
+                     :height 30
+                     :border-width 5
+                     :border-color "#A7A6AA"
+                     :cursor t
+                     :cursor-color "#A7A6AA"
+                     :accept-focus t
+                     :refresh 1
+                     :timeout 60)))
+  (defun select-ab-popup-frame()
+    (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
+      (select-frame-set-input-focus misc-posframe-frame)
+      (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c C-k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
+  (defun start-ab-popup()
+    (interactive)
+    (setup-ab-buffer)
+    (create-ab-popup-frame)
+    (select-ab-popup-frame)))
 
-(posframe-hide ab-popup-name)
-
-
-(defun create-ab-popup-frame()
-  (when (posframe-workable-p)
-    (posframe-show ab-popup-name
-                   :position (point)
-                   :width 40
-                   :height 30
-                   :border-width 5
-                   :border-color "#A7A6AA"
-                   :cursor t
-                   :cursor-color "#A7A6AA"
-                   :accept-focus t
-                   :refresh 1
-                   :timeout 60)))
-(defun select-ab-popup-frame()
-  (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
-    (select-frame-set-input-focus misc-posframe-frame)
-    (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c C-k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
-
-
-(defun start-ab-popup()
+(defun goto-scratch()
   (interactive)
-  (setup-ab-buffer)
-  (create-ab-popup-frame)
-  (select-ab-popup-frame))
+  (switch-to-buffer "*scratch*"))
 
-(evil-define-key 'normal 'emacs-lisp-mode-map (kbd "C-c C-t") 'start-ab-popup)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC C-n") 'goto-scratch)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC C-k") 'select-vterm-buffer)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC C-t") 'start-ab-popup)
+(evil-define-key '(insert normal visual) 'global (kbd "C-x f") 'helm-find-file)
+(evil-define-key '(normal) 'global (kbd "K") 'evil-ex-search-previous)
+(evil-define-key '(normal) 'global (kbd "k") 'evil-ex-search-next)
+(evil-define-key '(insert normal) 'global (kbd "C-x C-f") 'helm-find-files)
+
+
+(use-package! lsp-ui
+  :config
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-delay 0.5
+        lsp-ui-doc-show-with-cursor t
+        ))
