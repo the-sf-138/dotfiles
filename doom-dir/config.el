@@ -1,6 +1,5 @@
 
 (straight-use-package 'undo-tree)
-(straight-use-package 'posframe)
 (straight-use-package 'evil-owl)
 
 (use-package! undo-tree
@@ -83,14 +82,12 @@
                                        (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-t") 'start-ab-popup)
                                        (evil-define-key '(insert normal) vterm-mode-map (kbd "C-x C-f") 'find-file))
                                    ))
-  (after! multi-vterm
-    (defun tshell()
-      (interactive)
-      (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
-      (multi-vterm)
-      (rename-buffer new-shell-name))
-    (define-key! doom-leader-map "s" #'tshell))
-  )
+  (defun tshell()
+    (interactive)
+    (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
+    (multi-vterm)
+    (rename-buffer new-shell-name))
+  (define-key! doom-leader-map "s" #'tshell))
 
 (use-package! org-bullets
   :hook (org-mode-hook . (lambda ()
@@ -123,12 +120,12 @@
   (setq org-confirm-babel-evaluate nil)
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append))
 
-(after! switch-window
-  (after! evil
-    (evil-define-key 'normal 'global (kbd "C-x o") 'switch-window)
-    (setq-default switch-window-shortcut-style 'qwerty)
-    (setq-default switch-window-qwerty-shortcuts '("a" "s" "d" "f" "j" "k" "l" "w" "e" "i" "o"))
-    (setq-default switch-window-minibuffer-shortcut ?z)))
+(use-package! switch-window
+  :config
+  (evil-define-key 'normal 'global (kbd "C-x o") 'switch-window)
+  (setq-default switch-window-shortcut-style 'qwerty)
+  (setq-default switch-window-qwerty-shortcuts '("a" "s" "d" "f" "j" "k" "l" "w" "e" "i" "o"))
+  (setq-default switch-window-minibuffer-shortcut ?z))
 (after! projectile
   (setq projectile-per-project-compilation-buffer t)
   (evil-define-key '(normal) 'global (kbd "SPC ag") 'projectile-ag))
@@ -178,15 +175,15 @@
   (modify-syntax-entry ?' "'" nxml-mode-syntax-table))
 (add-hook 'nxml-mode-hook 'init-nxml-mode)
 
-(after! evil
-  (after! avy
-    (define-key! doom-leader-map "n" #'avy-goto-word-1)
-    (define-key! doom-leader-map "e" #'avy-goto-char-1)
-    (define-key! doom-leader-map "t" #'avy-goto-char-2)
-    (map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
-    (map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
-    (map! :map helm-swoop--basic-map "C-n" #'helm-next-line)
-    (map! :map helm-swoop--basic-map "C-p" #'helm-previous-line)))
+(use-package! avy
+  :config
+  (define-key! doom-leader-map "n" #'avy-goto-word-1)
+  (define-key! doom-leader-map "e" #'avy-goto-char-1)
+  (define-key! doom-leader-map "t" #'avy-goto-char-2)
+  (map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
+  (map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
+  (map! :map helm-swoop--basic-map "C-n" #'helm-next-line)
+  (map! :map helm-swoop--basic-map "C-p" #'helm-previous-line))
 
 (after! python-mode
   (modify-syntax-entry ?_ "w" python-mode-syntax-table)
@@ -270,10 +267,11 @@
           "https://www.allendowney.com/blog/feed/"
           "https://almostsuremath.com/feed/"
           )))
-(after! gptel
-  (setq gptel-api-key (with-temp-buffer
-                        (insert-file-contents  "/home/the_sf/keys/open-ai/emacs-key-2")
-                        (buffer-string)))
+(use-package! gptel
+  :config
+  (setq! gptel-api-key (with-temp-buffer
+                         (insert-file-contents  "/home/the_sf/keys/open-ai/emacs-key-2")
+                         (string-trim-right (buffer-string) "\n")))
   (setq gptel-default-mode 'org-mode))
 
 
@@ -340,46 +338,56 @@
           :prompt "Select a vterm buffer: ")))
 
                                         ; A popup window for querying chatgpt
-(defvar ab-popup-name "*ab-popup-buffer*")
-(defun setup-ab-buffer()
-  (with-current-buffer (get-buffer-create ab-popup-name)
-    (org-mode)
-    (gptel-mode)
-    (insert "*** ")
-    (evil-insert 1)))
+(use-package! posframe
+  :config
+  (defvar ab-popup-name "*ab-popup-buffer*")
+  (defun setup-ab-buffer()
+    (with-current-buffer (get-buffer-create ab-popup-name)
+      (erase-buffer)
+      (org-mode)
+      (gptel-mode)
+      (insert "*** ")))
+  (posframe-hide ab-popup-name)
+  (defun create-ab-popup-frame()
+    (when (posframe-workable-p)
+      (posframe-show ab-popup-name
+                     :position (point)
+                     :width 40
+                     :height 30
+                     :border-width 5
+                     :border-color "#A7A6AA"
+                     :cursor t
+                     :cursor-color "#A7A6AA"
+                     :accept-focus t
+                     :refresh 1
+                     :timeout 60)))
+  (defun select-ab-popup-frame()
+    (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
+      (select-frame-set-input-focus misc-posframe-frame)
+      (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c C-k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
+  (defun start-ab-popup()
+    (interactive)
+    (setup-ab-buffer)
+    (create-ab-popup-frame)
+    (select-ab-popup-frame)))
 
-(posframe-hide ab-popup-name)
-
-
-(defun create-ab-popup-frame()
-  (when (posframe-workable-p)
-    (posframe-show ab-popup-name
-                   :position (point)
-                   :width 80
-                   :height 30
-                   :border-width 5
-                   :border-color "#A7A6AA"
-                   :cursor t
-                   :cursor-color "#A7A6AA"
-                   :accept-focus t
-                   :refresh 1
-                   :timeout 60)))
-(defun select-ab-popup-frame()
-  (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
-    (select-frame-set-input-focus misc-posframe-frame)
-    (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c SPC k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
-
-
-(defun start-ab-popup()
+(defun goto-scratch()
   (interactive)
-  (setup-ab-buffer)
-  (create-ab-popup-frame)
-  (select-ab-popup-frame))
+  (switch-to-buffer "*scratch*"))
 
-(evil-define-key 'normal 'emacs-lisp-mode-map (kbd "C-c C-t") 'start-ab-popup)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC C-n") 'goto-scratch)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC C-k") 'select-vterm-buffer)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC C-t") 'start-ab-popup)
+(evil-define-key '(insert normal visual) 'global (kbd "C-x f") 'helm-find-file)
+(evil-define-key '(normal) 'global (kbd "K") 'evil-ex-search-previous)
+(evil-define-key '(normal) 'global (kbd "k") 'evil-ex-search-next)
+(evil-define-key '(insert normal) 'global (kbd "C-x C-f") 'helm-find-files)
 
 
-
-(define-key! doom-leader-map "c" nil)
-(define-key! doom-leader-map "c SPC" nil)
-(define-key! doom-leader-map "c SPC c" 'recompile)
+(use-package! lsp-ui
+  :config
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-delay 0.5
+        lsp-ui-doc-show-with-cursor t
+        ))

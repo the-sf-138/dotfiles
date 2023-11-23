@@ -79,6 +79,7 @@
 (package! general)
 
 (package! lsp-mode)
+(package! lsp-ui)
 
 (package! org-bullets)
 (package! org-agend :disable t)
