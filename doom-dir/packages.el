@@ -81,10 +81,12 @@
 (package! lsp-mode)
 (package! lsp-ui)
 
-(package! org-bullets)
-(package! org-agend :disable t)
+(package! python-black)
 
-(package! linum-relative-mode)
+(package! org-bullets)
+(package! org-agenda :disable t)
+
+(package! linum-relative)
 
 (package! rjsx-mode)
 
@@ -94,4 +96,4 @@
 
 (package! helm-swoop)
 (package! undo-tree)
-
+(package! clang-format)

@@ -1,12 +1,11 @@
 
-(straight-use-package 'undo-tree)
-(straight-use-package 'evil-owl)
+;(straight-use-package 'undo-tree)
+;(straight-use-package 'evil-owl)
 
-(use-package! undo-tree
-  :config (global-undo-tree-mode)
-  (define-key evil-normal-state-map "\C-r" nil)
-  (evil-define-key 'normal 'global "\C-r" 'undo-tree-redo)
-  (evil-define-key 'normal 'global "\M-r" 'undo-tree-visualize))
+(use-package! undo-fu
+  :config
+    (evil-define-key '(normal motion) 'global (kbd "l") 'undo-fu-only-undo)
+    (evil-define-key '(normal motion) 'global (kbd "C-r") 'undo-fu-only-redo))
 
 (use-package! evil
   :config (setq evil-emacs-state-modes  nil
@@ -68,20 +67,22 @@
 (setq shell-command-switch "-ic")
 
 
+(defun setup-vterm-mode()
+  (interactive)
+  (message "Setting up vterm mode")
+  (evil-collection-vterm-setup)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-c") 'vterm-send-C-c)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-<escape>") 'vterm-copy-mode)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-v") 'vterm-yank)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "M-:") 'eval-expression)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-t") 'vterm-copy-mode)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c SPC C-t") 'start-ab-popup)
+  (evil-define-key '(insert normal) vterm-mode-map (kbd "C-x C-f") 'find-file))
+(add-hook! 'vterm-mode-hook (setup-vterm-mode))
 
 (use-package! vterm
-  :config (use-package! multi-vterm
-            :hook (vterm-mode-hook . (lambda()
-                                       (message "Setting up vterm mode")
-                                       (evil-collection-vterm-setup)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-n") 'evil-collection-vterm-toggle-send-escape)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-c") 'vterm-send-C-c)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-<escape>") 'vterm-copy-mode)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-v") 'vterm-yank)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "M-:") 'eval-expression)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-c C-t") 'start-ab-popup)
-                                       (evil-define-key '(insert normal) vterm-mode-map (kbd "C-x C-f") 'find-file))
-                                   ))
+  :config (use-package! multi-vterm)
   (defun tshell()
     (interactive)
     (setq new-shell-name (read-from-minibuffer "shell buffer name: " nil nil nil nil "*shell*"))
@@ -161,6 +162,7 @@
   (let ((bounds (bounds-of-thing-at-point 'paragraph)))
     (clang-format-region (car bounds) (cdr bounds))))
 
+(straight-use-package 'clang-format)
 (use-package! clang-format
   :config (add-hook 'c++-mode-hook
                     (lambda()
@@ -194,6 +196,7 @@
                "jupyter")
   (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on)
   (add-hook 'python-mode-hook (lambda()
+                                (doom/set-indent-width 4)
                                 (rainbow-delimiters-mode-enable)
                                 (modify-syntax-entry ?_ "w" python-mode-syntax-table))))
 (after! company
@@ -266,6 +269,8 @@
           "https://www.countbayesie.com/blog?format=rss"
           "https://www.allendowney.com/blog/feed/"
           "https://almostsuremath.com/feed/"
+          "https://andrew.gibiansky.com/rss/"
+          "https://www.fast.ai/index.xml"
           )))
 (use-package! gptel
   :config
@@ -391,3 +396,9 @@
         lsp-ui-doc-delay 0.5
         lsp-ui-doc-show-with-cursor t
         ))
+
+(map! :map doc-view-mode-map "n" 'doc-view-next-line-or-next-page)
+
+(define-key! doom-leader-map "ag" #'+default/search-project)
+
+(straight-use-package 'python-black)
