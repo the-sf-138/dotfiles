@@ -1,11 +1,12 @@
 
-;(straight-use-package 'undo-tree)
-;(straight-use-package 'evil-owl)
+
+(straight-use-package 'evil-owl)
 
 (use-package! undo-fu
   :config
     (evil-define-key '(normal motion) 'global (kbd "l") 'undo-fu-only-undo)
     (evil-define-key '(normal motion) 'global (kbd "C-r") 'undo-fu-only-redo))
+
 
 (use-package! evil
   :config (setq evil-emacs-state-modes  nil
@@ -57,7 +58,7 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 
-(add-to-list 'default-frame-alist '(alpha 95 95))
+(add-to-list 'default-frame-alist '(alpha 99 99))
 (add-hook 'after-make-frame-functions (lambda (frame)
                                         (set-frame-font "Hack 14" t (list frame))))
 
@@ -197,6 +198,7 @@
   (add-hook 'inferior-python-mode-hook 'ansi-color-for-comint-mode-on)
   (add-hook 'python-mode-hook (lambda()
                                 (doom/set-indent-width 4)
+                                (lsp)
                                 (rainbow-delimiters-mode-enable)
                                 (modify-syntax-entry ?_ "w" python-mode-syntax-table))))
 (after! company
@@ -343,15 +345,16 @@
           :prompt "Select a vterm buffer: ")))
 
                                         ; A popup window for querying chatgpt
+(straight-use-package 'posframe)
 (use-package! posframe
   :config
   (defvar ab-popup-name "*ab-popup-buffer*")
   (defun setup-ab-buffer()
     (with-current-buffer (get-buffer-create ab-popup-name)
-      (erase-buffer)
       (org-mode)
       (gptel-mode)
-      (insert "*** ")))
+      (goto-char (point-max))
+      (evil-insert 0)))
   (posframe-hide ab-popup-name)
   (defun create-ab-popup-frame()
     (when (posframe-workable-p)
@@ -383,12 +386,15 @@
 (evil-define-key '(insert normal) 'global (kbd "C-c SPC C-n") 'goto-scratch)
 (evil-define-key '(insert normal) 'global (kbd "C-c SPC C-k") 'select-vterm-buffer)
 (evil-define-key '(insert normal) 'global (kbd "C-c SPC C-t") 'start-ab-popup)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC fr") 'lsp-find-references)
+(evil-define-key '(insert normal) 'global (kbd "C-c SPC fd") 'lsp-find-definition)
 (evil-define-key '(insert normal visual) 'global (kbd "C-x f") 'helm-find-file)
 (evil-define-key '(normal) 'global (kbd "K") 'evil-ex-search-previous)
 (evil-define-key '(normal) 'global (kbd "k") 'evil-ex-search-next)
 (evil-define-key '(insert normal) 'global (kbd "C-x C-f") 'helm-find-files)
 
 
+(straight-use-package 'lsp-ui)
 (use-package! lsp-ui
   :config
   (setq lsp-ui-doc-enable t
@@ -402,3 +408,16 @@
 (define-key! doom-leader-map "ag" #'+default/search-project)
 
 (straight-use-package 'python-black)
+
+(use-package! magit-todos
+        :config
+        (setq magit-todos-exclude-globs '(".git/*" "*.html")))
+
+(straight-use-package 'plantuml-mode)
+(use-package! plantuml-mode
+    :config
+    (setq plantuml-executable-path "/usr/bin/plantuml"
+          plantuml-default-exec-mode 'executable)
+    (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode)))
+
+
