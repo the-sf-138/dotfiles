@@ -53,7 +53,6 @@
 (package! pyvenv)
 (package! ansi-color)
 (package! posframe)
-(package! evil-owl)
 
 (package! general)
 (package! evil-snipe :disable t)
@@ -94,6 +93,7 @@
 
 (package! avy)
 
-(package! helm-swoop)
-(package! undo-tree)
 (package! clang-format)
+(package! ctrlf)
+(package! evil-owl)
+(package! magit-todo)
