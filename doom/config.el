@@ -419,5 +419,3 @@
     (setq plantuml-executable-path "/usr/bin/plantuml"
           plantuml-default-exec-mode 'executable)
     (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode)))
-
-
