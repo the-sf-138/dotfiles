@@ -8,7 +8,6 @@ if [[ $(ls $DOOMDIR | wc -l) -gt 0 ]]; then
     read -p "Clean up $DOOMDIR? [y/n] " confirmation
 
     if [[ "$confirmation" = "y" ]]; then
-        echo "Cleaning up with confirmation=${confirmation}"
         rm $DOOMDIR/*.el
     fi
 fi
@@ -21,7 +20,6 @@ done
 if [[ $(ls ~/.zshrc | wc -l) -gt 0 ]]; then
     read -p "Clean up ~/.zshrc? [y/n] " confirmation
     if [[ "$confirmation" = "y" ]]; then
-        echo "Cleaning up with confirmation=${confirmation}"
         rm ~/.zshrc
     fi
 fi

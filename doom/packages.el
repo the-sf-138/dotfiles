@@ -4,6 +4,10 @@
 (package! pyvenv)
 (package! python-black)
 
+(package! rustic)
+
+(package! clang-format)
+
 (package! ansi-color)
 (package! posframe)
 
@@ -11,16 +15,15 @@
 (package! general)
 (package! evil-owl)
 (package! ctrlf)
+(package! avy)
+
+(package! linum-relative)
 
 (package! vterm)
 (package! multi-vterm)
 
 (package! org-bullets)
-(package! avy)
 
-(package! helm-swoop)
-
-(package! rustic)
 
 (package! gptel)
 
@@ -31,12 +34,8 @@
 (package! org-bullets)
 (package! org-agenda :disable t)
 
-(package! linum-relative)
-
 (package! rjsx-mode)
 
 (package! switch-window)
 
-
-(package! clang-format)
-
+(package! plantuml-mode)

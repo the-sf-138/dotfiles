@@ -84,7 +84,7 @@ _test_tim_files_completion() {
             _values 'music files' $music_files
             ;;
         flags)
-            _values -s , 'flags' a b c d e
+            _values -s = 'flags' a b c d e
             ;;
     esac
 }

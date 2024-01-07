@@ -1,6 +1,5 @@
 
 
-(straight-use-package 'evil-owl)
 
 (use-package! undo-fu
   :config
@@ -155,7 +154,6 @@
   (let ((bounds (bounds-of-thing-at-point 'paragraph)))
     (clang-format-region (car bounds) (cdr bounds))))
 
-(straight-use-package 'clang-format)
 (use-package! clang-format
   :config (add-hook 'c++-mode-hook
                     (lambda()
@@ -347,7 +345,6 @@
           :prompt "Select a vterm buffer: ")))
 
                                         ; A popup window for querying chatgpt
-(straight-use-package 'posframe)
 (use-package! posframe
   :config
   (defvar ab-popup-name "*ab-popup-buffer*")
@@ -396,7 +393,6 @@
 (evil-define-key '(insert normal) 'global (kbd "C-x C-f") 'helm-find-files)
 
 
-(straight-use-package 'lsp-ui)
 (use-package! lsp-ui
   :config
   (setq lsp-ui-doc-enable t
@@ -409,13 +405,11 @@
 
 (define-key! doom-leader-map "ag" #'+default/search-project)
 
-(straight-use-package 'python-black)
 
 (use-package! magit-todos
   :config
   (setq magit-todos-exclude-globs '(".git/*" "*.html")))
 
-(straight-use-package 'plantuml-mode)
 (use-package! plantuml-mode
   :config
   (setq plantuml-executable-path "/usr/bin/plantuml"
