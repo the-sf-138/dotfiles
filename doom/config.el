@@ -4,9 +4,8 @@
 
 (use-package! undo-fu
   :config
-    (evil-define-key '(normal motion) 'global (kbd "l") 'undo-fu-only-undo)
-    (evil-define-key '(normal motion) 'global (kbd "C-r") 'undo-fu-only-redo))
-
+  (evil-define-key '(normal motion) 'global (kbd "l") 'undo-fu-only-undo)
+  (evil-define-key '(normal motion) 'global (kbd "C-r") 'undo-fu-only-redo))
 
 (use-package! evil
   :config (setq evil-emacs-state-modes  nil
@@ -53,9 +52,10 @@
 (map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
 (map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
 
-(use-package! ansi-color)
-(add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(use-package! ansi-color
+  :config
+  (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on))
 
 
 (add-to-list 'default-frame-alist '(alpha 99 99))
@@ -128,25 +128,17 @@
   (setq-default switch-window-shortcut-style 'qwerty)
   (setq-default switch-window-qwerty-shortcuts '("a" "s" "d" "f" "j" "k" "l" "w" "e" "i" "o"))
   (setq-default switch-window-minibuffer-shortcut ?z))
-(after! projectile
-  (setq projectile-per-project-compilation-buffer t)
-  (evil-define-key '(normal) 'global (kbd "SPC ag") 'projectile-ag))
+
+(use-package! projectile
+  :config
+  (setq projectile-project-search-path "/home/the_sf/src/"
+        projectile-project-root-files '(".git")
+        projectile-globally-ignored-file-suffixes '(".git")
+        projectile-per-project-compilation-buffer t))
+
 (setq-default gdb-display-io-nopopup t)
 
-(defun toggle-header-filename(filename)
-  (if (equal "C" (file-name-extension filename))
-      (concat (file-name-sans-extension filename) ".H")
-    (concat (file-name-sans-extension filename) ".C")))
-(defun is-cpp-ext(filename)
-  (let ((ext (file-name-extension filename)))
-    (or (equal ext "H") (equal ext "C"))))
-(defun toggle-header()
-  (interactive)
-  (let ((curr-file (buffer-file-name (current-buffer))))
-    (if (is-cpp-ext curr-file)
-        (find-file (toggle-header-filename curr-file)))))
-(after! evil
-  (define-key! doom-leader-map hh #'toggle-header))
+(define-key! doom-leader-map hh #'ff-find-other-file)
 
 (defun init-c++-mode()
   (modify-syntax-entry ?_ "w" c++-mode-syntax-table)
@@ -178,6 +170,17 @@
   (modify-syntax-entry ?' "'" nxml-mode-syntax-table))
 (add-hook 'nxml-mode-hook 'init-nxml-mode)
 
+
+(defun my/format-buffer()
+  (interactive)
+  (cond
+   ((eq major-mode 'c++-mode)
+    (clang-format-buffer))
+   ((eq major-mode 'python-mode)
+    (python-black-buffer))
+   (t (message "No supported formatter"))))
+(define-key! doom-leader-map "f f" #'my/format-buffer)
+
 (use-package! avy
   :config
   (define-key! doom-leader-map "n" #'avy-goto-word-1)
@@ -191,7 +194,6 @@
 (after! python-mode
   (modify-syntax-entry ?_ "w" python-mode-syntax-table)
   (setq python-shell-interpreter "/home/the_sf/.local/bin/ipython3"
-        python-shell-interpreter-args "-i --simple-prompt"
         python-shell-prompt-detect-failure-warning nil)
   (add-to-list 'python-shell-completion-native-disabled-interpreters
                "jupyter")
@@ -204,7 +206,7 @@
 (after! company
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
-        company-show-numbers t)
+        company-show-quick-access t)
 
   (after! company-prescient
     (setq history-length 1000
@@ -339,9 +341,9 @@
                                     vterm-buffers)))
     (helm :sources
           (helm-build-sync-source "Buffer"
-                                  :candidates selection-options
-                                  :action (lambda (candidate)
-                                            (switch-to-buffer candidate)))
+            :candidates selection-options
+            :action (lambda (candidate)
+                      (switch-to-buffer candidate)))
           :prompt "Select a vterm buffer: ")))
 
                                         ; A popup window for querying chatgpt
@@ -410,12 +412,22 @@
 (straight-use-package 'python-black)
 
 (use-package! magit-todos
-        :config
-        (setq magit-todos-exclude-globs '(".git/*" "*.html")))
+  :config
+  (setq magit-todos-exclude-globs '(".git/*" "*.html")))
 
 (straight-use-package 'plantuml-mode)
 (use-package! plantuml-mode
-    :config
-    (setq plantuml-executable-path "/usr/bin/plantuml"
-          plantuml-default-exec-mode 'executable)
-    (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode)))
+  :config
+  (setq plantuml-executable-path "/usr/bin/plantuml"
+        plantuml-default-exec-mode 'executable)
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode)))
+
+(use-package! ctrlf
+  :config
+  (define-key! '(motion normal) 'global
+    (kbd "/") 'ctrlf-forward-fuzzy
+    (kbd "?") 'ctrlf-backward-fuzzy)
+  (map! :map doom-leader-map "/"   #'evil-search-forward
+                             "C-k" #'ctrlf-forward-alternate)
+  (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-n") 'ctrlf-forward-alternate)
+  (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-p") 'ctrlf-backward-alternate))
