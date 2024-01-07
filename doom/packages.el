@@ -39,4 +39,4 @@
 
 
 (package! clang-format)
-(package! magit-todo)
+
