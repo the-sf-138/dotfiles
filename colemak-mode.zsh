@@ -47,6 +47,5 @@ for ckey qkey in ${(kv)qwerty_to_colemak}; do
 done
 
 for ckey qkey in ${(kv)qwerty_to_colemak}; do
-    echo "bindkey -M vicmd $ckey $original_binding[$qkey]"
     bindkey -M vicmd $ckey $original_binding[$qkey]
 done
