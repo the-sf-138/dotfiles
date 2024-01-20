@@ -10,12 +10,7 @@ alias src="cd ~/src"
 alias pub_ip="curl -s icanhazip.com/s"
 alias pd="pushd"
 
-bindkey -a h vi-backward-char
-bindkey -a n vi-down-line-or-history
-bindkey -a e vi-up-line-or-history
-bindkey -a i vi-forward-char
-bindkey -a / history-incremental-search-backward
-
+source /home/the_sf/src/dotfiles/colemak-mode.zsh
 
 # Stuff for vterm
 vterm_printf(){
