@@ -15,6 +15,7 @@
   (evil-define-key 'normal 'global (kbd ":") 'evil-paste-before)
   (evil-define-key 'normal 'global (kbd ".") 'evil-repeat)
   (evil-define-key 'normal 'global (kbd ",") 'evil-repeat-find-char-reverse)
+  (evil-define-key 'visual 'global (kbd "i") 'evil-forward-char)
   (map! :map evil-motion-state-map "g" #'evil-find-char-to)
   (map! :map evil-motion-state-map "C-v" #'evil-visual-block)
                                         ; disable evil-embrace stuff
@@ -64,7 +65,7 @@
 (evil-define-key 'motion 'global (kbd "C-+") 'text-scale-increase)
 (evil-define-key 'motion 'global (kbd "C--") 'text-scale-decrease)
 (setq shell-file-name "zsh")
-(setq shell-command-switch "-ic")
+(setq shell-command-switch "-c")
 
 
 (defun setup-vterm-mode()
@@ -425,3 +426,16 @@
                              "C-k" #'ctrlf-forward-alternate)
   (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-n") 'ctrlf-forward-alternate)
   (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-p") 'ctrlf-backward-alternate))
+
+
+; how to puni
+(use-package! puni
+  :config
+  (map! :map puni-mode-map "S-SPC h" #'puni-backward-sexp)
+  (map! :map puni-mode-map "S-SPC i" #'puni-forward-sexp)
+
+  (map! :map puni-mode-map "S-SPC l" #'puni-barf-forward)
+  (map! :map puni-mode-map "S-SPC u" #'puni-barf-backward)
+
+  (map! :map puni-mode-map "S-SPC m" #'puni-slurp-forward)
+  (map! :map puni-mode-map "S-SPC <" #'puni-slurp-backward))
