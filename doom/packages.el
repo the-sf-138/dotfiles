@@ -35,6 +35,7 @@
 (package! org-agenda :disable t)
 
 (package! rjsx-mode)
+(package! helm)
 
 (package! switch-window)
 

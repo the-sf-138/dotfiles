@@ -1,5 +1,5 @@
 
-
+(use-package! helm)
 
 (use-package! undo-fu
   :config
@@ -16,6 +16,7 @@
   (evil-define-key 'normal 'global (kbd ".") 'evil-repeat)
   (evil-define-key 'normal 'global (kbd ",") 'evil-repeat-find-char-reverse)
   (evil-define-key 'visual 'global (kbd "i") 'evil-forward-char)
+  (evil-define-key 'normal 'global (kbd "i") 'evil-forward-char)
   (map! :map evil-motion-state-map "g" #'evil-find-char-to)
   (map! :map evil-motion-state-map "C-v" #'evil-visual-block)
                                         ; disable evil-embrace stuff
@@ -49,8 +50,6 @@
                                          "n" (saving-special-register '(general-simulate-key ('evil-yank "u<")))
                                          "j" 'evil-yank-whole-line)))
 
-(map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
-(map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
 
 (use-package! ansi-color
   :config
@@ -59,8 +58,6 @@
 
 
 (add-to-list 'default-frame-alist '(alpha 99 99))
-(add-hook 'after-make-frame-functions (lambda (frame)
-                                        (set-frame-font "Hack 14" t (list frame))))
 
 (evil-define-key 'motion 'global (kbd "C-+") 'text-scale-increase)
 (evil-define-key 'motion 'global (kbd "C--") 'text-scale-decrease)
@@ -184,11 +181,7 @@
   :config
   (define-key! doom-leader-map "n" #'avy-goto-word-1)
   (define-key! doom-leader-map "e" #'avy-goto-char-1)
-  (define-key! doom-leader-map "t" #'avy-goto-char-2)
-  (map! :map evil-motion-state-map "/" #'helm-swoop-without-pre-input)
-  (map! :map evil-motion-state-map "?" #'helm-swoop-from-isearch)
-  (map! :map helm-swoop--basic-map "C-n" #'helm-next-line)
-  (map! :map helm-swoop--basic-map "C-p" #'helm-previous-line))
+  (define-key! doom-leader-map "t" #'avy-goto-char-2))
 
 (after! python-mode
   (modify-syntax-entry ?_ "w" python-mode-syntax-table)
@@ -314,7 +307,6 @@
                 evil-owl-extra-posframe-args '(:width 50 :height 20)
                 evil-owl-max-string-length 40))
 
-(set-frame-font "Hack 14")
 
 
                                         ; A helm menu for finding the right shell buffer
@@ -422,11 +414,12 @@
   (define-key! '(motion normal) 'global
     (kbd "/") 'ctrlf-forward-fuzzy
     (kbd "?") 'ctrlf-backward-fuzzy)
+  (map! :map evil-motion-state-map "/" #'ctrlf-forward-fuzzy)
+  (map! :map evil-motion-state-map "?" #'ctrlf-backward-fuzzy)
   (map! :map doom-leader-map "/"   #'evil-search-forward
                              "C-k" #'ctrlf-forward-alternate)
   (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-n") 'ctrlf-forward-alternate)
   (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-p") 'ctrlf-backward-alternate))
-
 
 ; how to puni
 (use-package! puni
@@ -439,3 +432,12 @@
 
   (map! :map puni-mode-map "S-SPC m" #'puni-slurp-forward)
   (map! :map puni-mode-map "S-SPC <" #'puni-slurp-backward))
+
+
+
+(defun ts/image-minor-mode-setup()
+  (interactive)
+  (message "in tims image-minor-mode hook"))
+
+
+(add-hook! image-minor-mode-hook 'ts/image-minor-mode-setup)
