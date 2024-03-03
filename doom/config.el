@@ -10,7 +10,7 @@
   :config (setq evil-emacs-state-modes  nil
                 evil-insert-state-modes nil
                 evil-normal-state-modes nil)
-  (defvar colemak-mode (load-file "~/.emacs.d/colemak-mode.el"))
+  (defvar colemak-mode (load-file "~/src/dotfiles/doom/colemak-mode.el"))
   (evil-define-key 'normal 'global (kbd "K") 'evil-ex-search-previous)
   (evil-define-key 'normal 'global (kbd ":") 'evil-paste-before)
   (evil-define-key 'normal 'global (kbd ".") 'evil-repeat)
@@ -386,14 +386,6 @@
 (evil-define-key '(insert normal) 'global (kbd "C-x C-f") 'helm-find-files)
 
 
-(use-package! lsp-ui
-  :config
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-delay 0.5
-        lsp-ui-doc-show-with-cursor t
-        ))
-
 (map! :map doc-view-mode-map "n" 'doc-view-next-line-or-next-page)
 
 (define-key! doom-leader-map "ag" #'+default/search-project)
@@ -418,8 +410,8 @@
   (map! :map evil-motion-state-map "?" #'ctrlf-backward-fuzzy)
   (map! :map doom-leader-map "/"   #'evil-search-forward
                              "C-k" #'ctrlf-forward-alternate)
-  (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-n") 'ctrlf-forward-alternate)
-  (define-key! '(normal motion insert) ctrlf-minibuffer-mode-map (kbd "C-p") 'ctrlf-backward-alternate))
+  (map! :map ctrlf-minibuffer-mode-map "C-n" 'ctrlf-forward-alternate)
+  (map! :map ctrlf-minibuffer-mode-map "C-p" 'ctrlf-backward-alternate))
 
 ; how to puni
 (use-package! puni

@@ -11,7 +11,9 @@ alias pub_ip="curl -s icanhazip.com/s"
 alias pd="pushd"
 
 source /home/the_sf/src/dotfiles/colemak-mode.zsh
-bindkey -M vicmd "v" edit-command
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd "v" edit-command-line
 
 # Stuff for vterm
 vterm_printf(){
