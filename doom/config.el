@@ -433,3 +433,14 @@
 
 
 (add-hook! image-minor-mode-hook 'ts/image-minor-mode-setup)
+
+(defvar code-forces-main "/home/the_sf/src/infinite-th-cf-parser/main.py")
+(defun ts/cf-compile()
+        (interactive)
+        (let* ((fname (buffer-file-name))
+               (problem (file-name-nondirectory (file-name-sans-extension fname))))
+          (compile (concat code-forces-main " --problem " problem))))
+
+
+(map! :map doom-leader-map "c SPC" #'recompile)
+(map! :map doom-leader-map "c t" #'ts/cf-compile)

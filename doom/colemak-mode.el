@@ -52,7 +52,7 @@
     (handle-stuff 'normal)
     (handle-stuff 'visual)
     (handle-stuff 'operator)
-    (evil-define-key 'motion 'global (kbd "dd") 'evil-goto-first-line)
+    (evil-define-key '(normal motion) 'global (kbd "dd") 'evil-goto-first-line)
     (evil-define-key 'motion 'global (kbd ".") 'evil-repeat)
     (evil-define-key 'motion 'global (kbd "l") 'undo-fu-only-undo)
     (evil-define-key 'motion 'global (kbd "C-r") 'undo-fu-only-redo))
