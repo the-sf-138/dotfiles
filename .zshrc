@@ -73,18 +73,12 @@ function test_tim() {
 }
 
 
-_test_tim_files_completion() {
-    _arguments '-m[music file]:filename:->files' '-f[flags]:flag:->flags'
-    case "$state" in
-        files)
-            local -a music_files
-            music_files=( $(ls ~/test-files/) )
-            _values 'music files' $music_files
-            ;;
-        flags)
-            _values -s = 'flags' a b c d e
-            ;;
-    esac
+_codeforces_completion() {
+    _arguments '--contest-number[ file]:xxx:->argument1' '--problem[problem letter]:xxx:->argument2'
 }
 
-compdef _test_tim_files_completion test_tim
+function codeforces() {
+    /home/the_sf/src/infinite-th-cf-parser/main.py $@
+}
+
+compdef _codeforces_completion codeforces

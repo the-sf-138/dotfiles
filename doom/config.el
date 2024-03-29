@@ -18,6 +18,7 @@
   (evil-define-key 'visual 'global (kbd "i") 'evil-forward-char)
   (evil-define-key 'normal 'global (kbd "i") 'evil-forward-char)
   (map! :map evil-motion-state-map "g" #'evil-find-char-to)
+  (map! :map evil-operator-state-map "g" #'evil-find-char-to)
   (map! :map evil-motion-state-map "C-v" #'evil-visual-block)
                                         ; disable evil-embrace stuff
   (setq! evil-want-Y-yank-to-eol nil))
@@ -238,7 +239,7 @@
 
 (defun edit-config-file()
   (interactive)
-  (find-file "/home/the_sf/src/dotfiles/doom-dir/config.el"))
+  (find-file "/home/the_sf/src/dotfiles/doom/config.el"))
 (evil-define-key 'normal 'global (kbd "C-c SPC c") 'edit-config-file)
 
 (defun reload-emacs-config()
@@ -438,9 +439,20 @@
 (defun ts/cf-compile()
         (interactive)
         (let* ((fname (buffer-file-name))
-               (problem (file-name-nondirectory (file-name-sans-extension fname))))
-          (compile (concat code-forces-main " --problem " problem))))
+               (problem (file-name-nondirectory (file-name-sans-extension fname)))
+               (mode-flag (cond
+                           ((eq major-mode 'c++-mode)
+                            " --cpp")
+                            ((eq major-mode 'python-mode)
+                             " --py"))))
+          (compile (concat code-forces-main " --problem " problem mode-flag))))
 
 
 (map! :map doom-leader-map "c SPC" #'recompile)
 (map! :map doom-leader-map "c t" #'ts/cf-compile)
+
+; No compilation buffer popup
+(setq display-buffer-alist
+      '(("\\*compilation\\*"
+         (display-buffer-no-window)
+         (reusable-frames . t))))
