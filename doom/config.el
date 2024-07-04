@@ -115,8 +115,7 @@
   (plist-put org-format-latex-options :scale 2)
 
   (org-babel-do-load-languages
-   'org-babel-load-languages '((R . t) (python . t)
-                               ))
+   'org-babel-load-languages '((R . t) (python . t) (jupyter . t)))
   (setq org-confirm-babel-evaluate nil)
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append))
 
@@ -157,8 +156,6 @@
   :config (add-hook 'c++-mode-hook
                     (lambda()
                       (message "setting doom leader map hooks")
-                      (define-key! doom-leader-map "f f" nil)
-                      (define-key! doom-leader-map "f f" #'clang-format-buffer)
                       (define-key! doom-leader-map "f r" nil)
                       (define-key! doom-leader-map "f r" #'clang-format-region-at-point))))
 
@@ -175,6 +172,8 @@
     (clang-format-buffer))
    ((eq major-mode 'python-mode)
     (python-black-buffer))
+   ((eq major-mode 'rustic-mode)
+    (rustic-cargo-fmt))
    (t (message "No supported formatter"))))
 (define-key! doom-leader-map "f f" #'my/format-buffer)
 
@@ -205,7 +204,8 @@
     (setq history-length 1000
           prescient-history-length 1000)))
 (after! magit
-  (evil-collection-magit-setup)
+  (after! evil-collection
+    (evil-collection-magit-setup))
   (evil-define-key 'normal 'magit-mode-map "n" 'evil-next-visual-line)
   (evil-define-key 'normal 'magit-mode-map "e" 'evil-previous-visual-line)
   (evil-define-key 'normal 'magit-mode-map "i" 'evil-forward-char)
@@ -215,11 +215,14 @@
   (interactive)
   (rainbow-delimiters-mode))
 (add-hook 'elisp-mode-hook 'elisp-init-stuff)
+
+
 (defun cf-compile()
   (let* ((fname (buffer-name (current-buffer)))
          (problem (file-name-sans-extension fname))
          (command (concat "cf --problem " problem)))
     (compile command)))
+
 (after! rustic
   (defun rust-init-stuff()
     (modify-syntax-entry ?_ "w" rustic-mode-syntax-table)
@@ -242,10 +245,6 @@
   (find-file "/home/the_sf/src/dotfiles/doom/config.el"))
 (evil-define-key 'normal 'global (kbd "C-c SPC c") 'edit-config-file)
 
-(defun reload-emacs-config()
-  (interactive)
-  (load-file "/home/the_sf/src/dotfiles/init.el"))
-
 (after! vterm
   (defun init-expected-buffers()
     (if (eq (get-buffer "main") nil)
@@ -254,8 +253,10 @@
           (rename-buffer "main"))))
                                         ;(init-expected-buffers)
   )
+
 (after! helpful
   (global-set-key (kbd "C-x c a") #'helpful-symbol))
+
 (after! elfeed
   (setq elfeed-feeds
         '("https://lukesmith.xyz/index.xml"
@@ -269,6 +270,7 @@
           "https://andrew.gibiansky.com/rss/"
           "https://www.fast.ai/index.xml"
           )))
+
 (use-package! gptel
   :config
   (setq! gptel-api-key (with-temp-buffer
@@ -277,8 +279,8 @@
   (setq gptel-default-mode 'org-mode))
 
 
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "chromium"
+(setq browse-url-browser-function 'browse-url-chrome
+      browse-url-generic-program "google-chrome"
       browse-url-generic-args (list "--incognito"))
 
                                         ; UMM
@@ -415,6 +417,7 @@
   (map! :map ctrlf-minibuffer-mode-map "C-p" 'ctrlf-backward-alternate))
 
 ; how to puni
+(straight-use-package 'puni)
 (use-package! puni
   :config
   (map! :map puni-mode-map "S-SPC h" #'puni-backward-sexp)
@@ -456,3 +459,24 @@
       '(("\\*compilation\\*"
          (display-buffer-no-window)
          (reusable-frames . t))))
+
+(smartparens-global-mode -1)
+
+
+(defun is-cf-file (fname)
+  (string-match-p "[a-e]\.\\(C\\|py\\|input\.[0-9]\\|ouptut\.[0-9]\\)" fname))
+(defun ts/cf-cleanup()
+  (interactive)
+  (mapcar
+   '(lambda (b) (let* ((fname (file-name-nondirectory (buffer-file-name b))))
+                  (if (is-cf-file fname)
+                      (progn
+                        (message (concat "Killing buffer with filename =" fname))
+                        (kill-buffer b))
+                    )))
+   (-filter
+    '(lambda(b1) (buffer-file-name  b1))
+    (buffer-list))))
+
+
+(setq python-black-command "/usr/bin/black")

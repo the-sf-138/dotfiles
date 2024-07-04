@@ -37,6 +37,8 @@
 (package! rjsx-mode)
 (package! helm)
 
+(package! puni)
+
 (package! switch-window)
 
 (package! plantuml-mode)

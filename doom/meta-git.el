@@ -78,7 +78,7 @@
     (let* ((max-path-length (meta-git-pad-to-multiple (+ meta-git-tab-width (apply #'max (mapcar (lambda(d) (length (plist-get (car d) :path))) meta-git-dictionary))) meta-git-tab-width)))
       (erase-buffer)
       (mapc (lambda(d)
-              (insert (format-message "%s%s\n" (meta-git-pad-path (plist-get (car d) :path) max-path-length)  (if (eq (plist-get (car d) :has-changes) 0) "o" "x"))))
+              (insert (format-message "%s%s\n" (meta-git-pad-path (plist-get (car d) :path) max-path-length)  (if (eq (plist-get (car d) :has-changes) 0) "✅" "❌"))))
             meta-git-dictionary)
       ;(insert (format))
       )))
