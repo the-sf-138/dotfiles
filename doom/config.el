@@ -211,8 +211,10 @@
   (evil-define-key 'normal 'magit-mode-map "i" 'evil-forward-char)
   (evil-define-key 'normal 'magit-mode-map "dd" 'evil-goto-first-line)
   (evil-define-key 'normal 'magit-mode-map "D" 'evil-goto-line))
+
 (defun elisp-init-stuff()
   (interactive)
+  (smartparens-mode 0)
   (rainbow-delimiters-mode))
 (add-hook 'elisp-mode-hook 'elisp-init-stuff)
 
@@ -324,22 +326,11 @@
       (setq bname-len (+ bname-len 4)))
     (concat bname bdir)))
 
+
+(defvar inferior-vterm-loaded (load-file "~/src/dotfiles/doom/inferior-vterm.el"))
 (defun select-vterm-buffer ()
   (interactive)
-  (let* ((vterm-buffers (seq-filter (lambda (buffer)
-
-                                      (with-current-buffer buffer (derived-mode-p 'vterm-mode)))
-                                    (buffer-list)))
-         (selection-options (mapcar (lambda (b)
-                                      (let* ((entry-name (select-vterm-buffer--format b)))
-                                        (cons entry-name b)))
-                                    vterm-buffers)))
-    (helm :sources
-          (helm-build-sync-source "Buffer"
-            :candidates selection-options
-            :action (lambda (candidate)
-                      (switch-to-buffer candidate)))
-          :prompt "Select a vterm buffer: ")))
+  (switch-to-buffer (inferior-vterm-select-vterm-buffer)))
 
                                         ; A popup window for querying chatgpt
 (use-package! posframe
@@ -486,3 +477,6 @@
 (setq python-black-command "/usr/bin/black")
 
 (load-theme 'ef-dream)
+
+
+(message (select-vterm-buffer))
