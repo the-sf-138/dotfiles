@@ -24,7 +24,8 @@ if [[ $(ls ~/.zshrc | wc -l) -gt 0 ]]; then
     fi
 fi
 
-for f in ".zshrc"; do
+for f in ".zshrc" ".gdbinit"; do
     MSG="install of ${f}:\t "
     ln -s $(pwd)/${f} ~/${f} && echo -e "$MSG $SUCCESS_EMOJI" || echo -e "$MSG $FAILED_EMOJI"
 done
+

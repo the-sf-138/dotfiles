@@ -228,7 +228,8 @@
     (modify-syntax-entry ?_ "w" rustic-mode-syntax-table)
 
     (evil-define-key 'normal rustic-mode-map (kbd "SPC fr") 'rustic-format-region)
-    (rainbow-delimiters-mode 1))
+    (rainbow-delimiters-mode 1)
+    (eglot-ensure))
 
   (add-hook 'rustic-mode-hook 'rust-init-stuff))
 (setq is-pyim-activated nil)
@@ -355,7 +356,7 @@
     (when (posframe-workable-p)
       (posframe-show ab-popup-name
                      :position (point)
-                     :width 40
+                     :width 80
                      :height 30
                      :border-width 5
                      :border-color "#A7A6AA"
@@ -458,6 +459,9 @@
 (setq display-buffer-alist
       '(("\\*compilation\\*"
          (display-buffer-no-window)
+         (reusable-frames . t))
+      ("\\*compilation\\*\\<tractor-server\\>"
+         (display-buffer-no-window)
          (reusable-frames . t))))
 
 (smartparens-global-mode -1)
@@ -480,3 +484,5 @@
 
 
 (setq python-black-command "/usr/bin/black")
+
+(load-theme 'ef-dream)

@@ -52,11 +52,6 @@ export PATH=$PATH:/home/the_sf/bin/
 fpath=(~/.zsh/completions $fpath)
 
 
-function test_tim() {
-    echo "Selected $1"
-}
-
-
 _codeforces_completion() {
     _arguments '--contest-number[ file]:xxx:->argument1' '--problem[problem letter]:xxx:->argument2'
 }
@@ -82,3 +77,14 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+my_cd_up() {
+  cd ..
+}
+
+zle -N my_cd_up
+bindkey '^T' my_cd_up
+
+
+alias open="xdg-open"
+
+bindkey '^r' history-incremental-search-backward

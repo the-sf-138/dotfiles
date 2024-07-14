@@ -42,3 +42,5 @@
 (package! switch-window)
 
 (package! plantuml-mode)
+
+(package! ef-themes)
