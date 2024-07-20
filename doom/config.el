@@ -356,13 +356,29 @@
                      :cursor-color "#A7A6AA"
                      :accept-focus t
                      :refresh 1
-                     :timeout 60)))
+                     :timeout nil)))
+
+
+
+  (defun assert-response-view-2(response-start response-end)
+    (if (equal (buffer-name (current-buffer)) ab-popup-name)
+      (if (not (eq (point-max) (window-end)))
+          (let* ((curr-line (line-number-at-pos (point)))
+                 (end-line (line-number-at-pos (point-max)))
+                 (distance-to-scroll (- end-line curr-line)))
+                 (scroll-up (+ distance-to-scroll 1))))))
   (defun select-ab-popup-frame()
     (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
       (select-frame-set-input-focus misc-posframe-frame)
+
+      ; Hackily end up inserting at the last bullet
+      (goto-char (point-max))
       (org-end-of-subtree)
-      (evil-insert)
-      (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c C-k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
+      (evil-append 1)
+
+      (set (make-local-variable 'window-point-insertion-type) t)
+      (add-hook 'gptel-post-response-hook #'assert-response-view-2)
+      (evil-define-key '(insert normal motion) (current-local-map) (kbd "") (lambda() (interactive) (posframe-hide ab-popup-name)))))
   (defun start-ab-popup()
     (interactive)
     (setup-ab-buffer)
