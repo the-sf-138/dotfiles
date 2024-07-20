@@ -20,11 +20,10 @@
 ;;; Code:
 
 
-
 (provide 'inferior-vterm)
 
 (require 'vterm)
-(require 'seq)
+(require 'cl-lib)
 (require 'helm)
 
 
@@ -32,7 +31,7 @@
   (with-current-buffer buffer-name
     (vterm-send-string text)))
 
-(defvar-local inferior-vterm-target-name "main")
+(defvar inferior-vterm-target-name nil)
 
 (defun inferior-vterm-select-vterm-buffer--format (buffer)
   (let* ((bname (buffer-name buffer))
@@ -46,7 +45,7 @@
 
 (defun inferior-vterm-select-vterm-buffer ()
   (interactive)
-  (let* ((vterm-buffers (seq-filter (lambda (buffer)
+  (let* ((vterm-buffers (cl-remove-if-not (lambda (buffer)
 
                                       (with-current-buffer buffer (derived-mode-p 'vterm-mode)))
                                     (buffer-list)))
@@ -68,15 +67,29 @@
   (message (concat "Getting called from inside of buffer: " cur-buf-name " pointing to target=" target-buf-name))
   (setq-local inferior-vterm-target-name target-buf-name)))
 
+
 (defun inferior-vterm-send-region()
   (interactive)
+  (if (eq inferior-vterm-target-name nil)
+      (inferior-vterm-assign-inferior))
   (let ((bounds (bounds-of-thing-at-point 'paragraph)))
     (inferior-vterm-send-text
      inferior-vterm-target-name
   (buffer-substring
      (car bounds) (cdr bounds)))))
 
-(inferior-vterm-send-text "main" "echo 'hello'")
 
+(define-minor-mode inferior-vterm-mode
+  "Send regions of shell buffers to inferior vterms"
+  :lighter "ivterm"
+  :keymap (let* ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c SPC vm") 'inferior-vterm-assign-inferior)
+            (define-key map (kbd "C-c C-y C-w") 'inferior-vterm-send-region)
+            map)
+  (make-local-variable 'inferior-vterm-target-name))
+
+(add-hook 'sh-mode-hook 'inferior-vterm-mode)
+
+(provide 'inferior-vterm-mode)
 
 ;;; inferior-vterm.el ends here

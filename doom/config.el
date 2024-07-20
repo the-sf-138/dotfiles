@@ -476,7 +476,7 @@
 
 (setq python-black-command "/usr/bin/black")
 
-(load-theme 'ef-dream)
+(load-theme "ef-dream")
 
 
 (message (select-vterm-buffer))
