@@ -271,6 +271,7 @@
           "https://www.allendowney.com/blog/feed/"
           "https://almostsuremath.com/feed/"
           "https://andrew.gibiansky.com/rss/"
+          "https://nullprogram.com/feed/"
           "https://www.fast.ai/index.xml"
           )))
 
@@ -359,6 +360,8 @@
   (defun select-ab-popup-frame()
     (let* ((misc-posframe-frame (with-current-buffer ab-popup-name posframe--frame)))
       (select-frame-set-input-focus misc-posframe-frame)
+      (org-end-of-subtree)
+      (evil-insert)
       (evil-define-key '(insert normal motion) (current-local-map) (kbd "C-c C-k") (lambda() (interactive) (posframe-hide ab-popup-name)))))
   (defun start-ab-popup()
     (interactive)
@@ -476,7 +479,7 @@
 
 (setq python-black-command "/usr/bin/black")
 
-(load-theme "ef-dream")
+(load-theme 'ef-dream)
 
 
 (message (select-vterm-buffer))
