@@ -360,7 +360,7 @@
 
 
 
-  (defun assert-response-view-2(response-start response-end)
+  (defun assert-response-view(response-start response-end)
     (if (equal (buffer-name (current-buffer)) ab-popup-name)
       (if (not (eq (point-max) (window-end)))
           (let* ((curr-line (line-number-at-pos (point)))
@@ -377,7 +377,7 @@
       (evil-append 1)
 
       (set (make-local-variable 'window-point-insertion-type) t)
-      (add-hook 'gptel-post-response-hook #'assert-response-view-2)
+      (add-hook 'gptel-post-response-hook #'assert-response-view)
       (evil-define-key '(insert normal motion) (current-local-map) (kbd "") (lambda() (interactive) (posframe-hide ab-popup-name)))))
   (defun start-ab-popup()
     (interactive)
