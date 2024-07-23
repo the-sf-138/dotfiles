@@ -88,3 +88,5 @@ bindkey '^T' my_cd_up
 alias open="xdg-open"
 
 bindkey '^r' history-incremental-search-backward
+
+export PATH="/home/the_sf/.cargo/bin:$PATH"
